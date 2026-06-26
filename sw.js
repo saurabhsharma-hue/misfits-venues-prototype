@@ -1,7 +1,7 @@
 /* Misfits Venues prototype — service worker.
-   Cache-first with network fallback; caches everything on first fetch so the
-   prototype works offline / installs as a PWA. */
-const CACHE = 'misfits-venues-v1';
+   Network-first (so updates always show when online), with cache fallback
+   for offline / installed-PWA use. Bump CACHE to invalidate old caches. */
+const CACHE = 'misfits-venues-v3';
 
 self.addEventListener('install', (e) => {
   self.skipWaiting();
@@ -18,15 +18,14 @@ self.addEventListener('activate', (e) => {
 self.addEventListener('fetch', (e) => {
   if (e.request.method !== 'GET') return;
   e.respondWith(
-    caches.open(CACHE).then((cache) =>
-      cache.match(e.request).then((hit) =>
-        hit || fetch(e.request).then((resp) => {
-          try {
-            if (resp && resp.status === 200) cache.put(e.request, resp.clone());
-          } catch (_) {}
-          return resp;
-        }).catch(() => hit)
-      )
-    )
+    fetch(e.request)
+      .then((resp) => {
+        const copy = resp.clone();
+        if (resp && resp.status === 200) {
+          caches.open(CACHE).then((c) => { try { c.put(e.request, copy); } catch (_) {} });
+        }
+        return resp;
+      })
+      .catch(() => caches.match(e.request))
   );
 });
