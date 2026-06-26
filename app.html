@@ -1,0 +1,1451 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<title>Misfits — Venues</title>
+<!-- our real stylesheets (these @import Lato + Cabinet Grotesk themselves) -->
+<link rel="stylesheet" href="assets/css/syc.css" />
+<link rel="stylesheet" href="assets/css/vp.css" />
+<link rel="stylesheet" href="assets/css/vl.css" />
+<style>
+  /* ---- prototype shell: stand in for the iOS status bar + make the real
+         .syc-screen sit cleanly in a phone-sized viewport ---- */
+  html, body { height: 100%; margin: 0; background: #FAF9F7; }
+  body { font-family: 'Lato', sans-serif; }
+
+  .proto-statusbar{
+    position: fixed; top: 0; left: 0; right: 0; height: 50px; z-index: 2000;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 14px 26px 0; pointer-events: none;
+    font-family: 'Lato', sans-serif; font-weight: 700; font-size: 15px; color: #191C20;
+  }
+  .proto-statusbar .island{
+    position: absolute; top: 9px; left: 50%; transform: translateX(-50%);
+    width: 118px; height: 32px; background: #000; border-radius: 18px;
+  }
+  .proto-statusbar .right{ display: flex; align-items: center; gap: 6px; }
+
+  /* push every screen's content below the status bar; keep heights bounded */
+  .screen-host .syc-screen{ box-sizing: border-box; padding-top: 50px; }
+  /* the venue dashboard manages its own 100dvh shell — keep status-bar inset */
+  .screen-host[data-screen="venue-owner"] .syc-screen{ padding-top: 50px; height: 100dvh; }
+
+  /* the screen-host fills the viewport and scrolls */
+  .screen-host{ min-height: 100dvh; }
+
+  /* small helper: venue cover image fills the card cover box */
+  .vp-venue-cover > img{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover; display:block; }
+  .vp-venue-cover{ position:relative; overflow:hidden; height:150px; }
+  .l3-hero{ width:100%; height:230px; object-fit:cover; display:block; }
+  .l3-newbadge{ position:absolute; top:12px; right:12px; background:rgba(255,255,255,.92); color:#7A5900;
+    padding:3px 9px; border-radius:99px; font-size:11px; font-weight:800; border:1px solid #FCE7B0; }
+</style>
+</head>
+<body>
+
+  <div class="proto-statusbar">
+    <div class="island"></div>
+    <div class="time">9:41</div>
+    <div class="right">
+      <svg width="18" height="12" viewBox="0 0 18 12" fill="none"><rect x="0" y="7" width="3" height="5" rx="1" fill="#191C20"/><rect x="5" y="4" width="3" height="8" rx="1" fill="#191C20"/><rect x="10" y="1.5" width="3" height="10.5" rx="1" fill="#191C20"/><rect x="15" y="0" width="3" height="12" rx="1" fill="#191C20" opacity=".35"/></svg>
+      <svg width="17" height="12" viewBox="0 0 17 12" fill="none"><path d="M8.5 2.5c2.2 0 4.2.85 5.7 2.25l1.3-1.35A10.2 10.2 0 0 0 8.5.5 10.2 10.2 0 0 0 1.5 3.4l1.3 1.35A8.2 8.2 0 0 1 8.5 2.5Z" fill="#191C20"/><path d="M8.5 6c1.1 0 2.1.43 2.85 1.15l1.3-1.35A6.2 6.2 0 0 0 8.5 4a6.2 6.2 0 0 0-4.15 1.8l1.3 1.35A4.2 4.2 0 0 1 8.5 6Z" fill="#191C20"/><circle cx="8.5" cy="9.8" r="1.6" fill="#191C20"/></svg>
+      <svg width="26" height="13" viewBox="0 0 26 13" fill="none"><rect x="1" y="1.5" width="21" height="10" rx="3" stroke="#191C20" stroke-opacity=".5"/><rect x="2.5" y="3" width="17" height="7" rx="1.5" fill="#191C20"/><rect x="23.5" y="4.5" width="1.6" height="4" rx="1" fill="#191C20" fill-opacity=".5"/></svg>
+    </div>
+  </div>
+
+  <!-- ===================== L1 ENTRY — decision (two doors) ===================== -->
+  <div class="screen-host active" data-screen="decision">
+    <div class="syc-screen decision-screen">
+      <div class="decision-body">
+        <div class="decision-card-group decision-animate">
+          <img src="assets/miffy_wave.svg" alt="Miffy" class="decision-miffy" />
+          <div class="decision-card">
+            <div class="decision-pill">🏟️ Spaces for your community</div>
+            <h2 class="decision-heading">How can we help?</h2>
+            <p style="font-family:'Lato',sans-serif;font-size:15px;line-height:1.5;color:#46474A;text-align:center;margin:8px 0 24px;">
+              Two doors — both open to good things.
+            </p>
+            <div class="decision-buttons">
+              <button class="decision-btn primary" onclick="openLeaderHome('explore')"
+                style="display:flex;flex-direction:row;align-items:center;gap:13px;padding-top:18px;padding-bottom:18px;text-align:left;">
+                <span class="btn-icon">🧭</span>
+                <span style="display:flex;flex-direction:column;gap:3px;min-width:0;">
+                  <span class="btn-text">Explore venues</span>
+                  <span style="font-family:'Lato',sans-serif;font-size:12px;font-weight:500;color:#7A5900;line-height:1.35;">Browse spaces in your area, find one that fits your vibe.</span>
+                </span>
+              </button>
+              <button class="decision-btn secondary" onclick="go('partner-form')"
+                style="display:flex;flex-direction:row;align-items:center;gap:13px;padding-top:18px;padding-bottom:18px;text-align:left;">
+                <span class="btn-icon">🏠</span>
+                <span style="display:flex;flex-direction:column;gap:3px;min-width:0;">
+                  <span class="btn-text">Become a venue partner</span>
+                  <span style="font-family:'Lato',sans-serif;font-size:12px;font-weight:500;color:#717175;line-height:1.35;">List your space, fill your quiet hours, earn on your terms.</span>
+                </span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== L1 HOME (leader shell: Bookings + Explore tabs + Book FAB) ===================== -->
+  <div class="screen-host" data-screen="leader-home">
+    <div class="syc-screen vp-detail-screen" style="height:100dvh;min-height:100dvh;padding-bottom:0;overflow:hidden;">
+      <!-- Tier 1 brand bar -->
+      <div class="vp-detail-topbar">
+        <img src="assets/misfits_logo.png" alt="Misfits" class="vp-brand-logo" />
+        <div class="vp-appbar-actions"><button class="vp-appbar-help" onclick="toast('Help &amp; support — chat with the Misfits team')"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="#191C20" stroke-width="2"/><path d="M9.5 9a2.5 2.5 0 015 0c0 2-2.5 2-2.5 4M12 17h.01" stroke="#191C20" stroke-width="2" stroke-linecap="round"/></svg><span>Help</span></button></div>
+      </div>
+      <!-- Tier 2 club identity -->
+      <div style="display:flex;align-items:center;gap:10px;padding:8px 16px 12px;background:#FCFCFD;border-bottom:1px solid #E8E8E8;">
+        <div style="display:flex;align-items:center;gap:10px;flex:1;min-width:0;cursor:pointer;" onclick="toast('Edit club profile')">
+          <div style="width:40px;height:40px;border-radius:12px;background:linear-gradient(135deg,#FFEFD6,#FABB22);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;">📚</div>
+          <div style="flex:1;min-width:0;">
+            <div style="font-size:15px;font-weight:800;color:#191C20;">Indiranagar Book Club</div>
+            <div style="font-size:11px;color:#717175;margin-top:1px;">Book club · Meets every Thursday</div>
+          </div>
+        </div>
+        <div style="display:flex;gap:6px;align-items:center;flex-shrink:0;">
+          <button class="vp-venue-iconbtn" title="Edit profile" onclick="toast('Edit club profile')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#191C20" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 113 3L7 19l-4 1 1-4z"/></svg></button>
+          <button class="vp-venue-iconbtn" title="Preview" onclick="toast('Preview your public club page')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" stroke="#191C20" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="12" cy="12" r="3" stroke="#191C20" stroke-width="2"/></svg></button>
+        </div>
+      </div>
+      <!-- scroll area -->
+      <div style="position:relative;flex:1;min-height:0;">
+        <div class="vf-scroll" id="leader-scroll" style="position:absolute;inset:0;overflow-y:auto;-webkit-overflow-scrolling:touch;">
+          <div style="padding-bottom:100px;">
+
+           <!-- Bookings tab (L1Bookings) -->
+           <div id="ltab-bookings">
+             <div style="padding:18px 16px 0;display:flex;align-items:center;gap:8px;">
+               <div style="font-size:12px;font-weight:800;color:#717175;text-transform:uppercase;letter-spacing:.6px;">This week</div>
+               <div style="background:#FABB22;color:#261900;padding:1px 8px;border-radius:99px;font-size:11px;font-weight:800;">1</div>
+             </div>
+             <div style="padding:8px 16px 0;">
+               <div onclick="toast('Opening booking…')" style="display:flex;gap:12px;padding:12px;background:#FFF;border:1px solid #E8E8E8;border-radius:12px;margin-bottom:8px;cursor:pointer;align-items:center;">
+                 <div style="width:56px;height:56px;flex-shrink:0;display:flex;flex-direction:column;align-items:center;justify-content:center;border-radius:10px;background:#DCEFD8;">
+                   <div style="font-size:22px;font-weight:800;color:#191C20;">25</div>
+                   <div style="font-size:10px;font-weight:700;color:#717175;text-transform:uppercase;letter-spacing:.5px;">JUN</div>
+                 </div>
+                 <div style="flex:1;min-width:0;">
+                   <div style="font-size:15px;font-weight:800;color:#191C20;display:flex;align-items:center;gap:6px;">
+                     <span style="flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">The Hive Café</span>
+                     <span style="background:#DCEFD8;color:#2D6A3E;font-size:10px;font-weight:800;padding:2px 7px;border-radius:99px;">✓ Confirmed</span>
+                     <span style="background:#DCEFD8;color:#2D6A3E;font-size:10px;font-weight:800;padding:2px 7px;border-radius:99px;">🔁</span>
+                   </div>
+                   <div style="font-size:12px;color:#46474A;margin-top:2px;">Thursday · 6–9pm · Book club · 14 expected</div>
+                 </div>
+               </div>
+             </div>
+             <div style="padding:18px 16px 0;display:flex;align-items:center;gap:8px;">
+               <div style="font-size:12px;font-weight:800;color:#717175;text-transform:uppercase;letter-spacing:.6px;">Later</div>
+               <div style="background:#FABB22;color:#261900;padding:1px 8px;border-radius:99px;font-size:11px;font-weight:800;">1</div>
+             </div>
+             <div style="padding:8px 16px 0;">
+               <div onclick="toast('Opening booking…')" style="display:flex;gap:12px;padding:12px;background:#FCFAF3;border:1px dashed #E0D5B0;border-radius:12px;margin-bottom:8px;cursor:pointer;align-items:center;">
+                 <div style="width:56px;height:56px;flex-shrink:0;display:flex;flex-direction:column;align-items:center;justify-content:center;border-radius:10px;background:#F3EFE0;">
+                   <div style="font-size:22px;font-weight:800;color:#191C20;">2</div>
+                   <div style="font-size:10px;font-weight:700;color:#717175;text-transform:uppercase;letter-spacing:.5px;">JUL</div>
+                 </div>
+                 <div style="flex:1;min-width:0;">
+                   <div style="font-size:15px;font-weight:800;color:#7A5900;display:flex;align-items:center;gap:6px;">
+                     <span style="flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Venue will confirm this Thursday</span>
+                     <span style="background:#FFF3CC;color:#7A5900;font-size:12px;padding:3px 6px;border-radius:99px;">🔁</span>
+                   </div>
+                   <div style="font-size:12px;color:#46474A;margin-top:2px;">The Hive Café · 6–9pm · Book club</div>
+                   <div style="font-size:11px;color:#9A7F1A;margin-top:6px;font-weight:700;">Skip this week →</div>
+                 </div>
+               </div>
+             </div>
+           </div>
+
+           <!-- Explore tab (L1Explore) -->
+           <div id="ltab-explore" style="display:none;">
+
+      <!-- Search -->
+      <div style="padding:6px 16px 0;">
+        <input id="ex-search" placeholder="🔍 Search by venue name…" oninput="renderList(this.value)"
+          style="width:100%;padding:12px 14px;border-radius:12px;border:1px solid #E0E0E2;background:#FFF;font-family:inherit;font-size:14px;box-sizing:border-box;" />
+      </div>
+
+      <!-- City + Area pickers -->
+      <div style="padding:12px 16px 0;display:flex;gap:8px;">
+        <div style="flex:1;position:relative;">
+          <div style="font-size:11px;font-weight:800;color:#717175;text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px;">City</div>
+          <div id="city-val" onclick="toggleDD('city-dd')" style="cursor:pointer;display:flex;align-items:center;justify-content:space-between;padding:12px 14px;border-radius:12px;border:1.5px solid #C6C6CA;background:#fff;font-size:14px;font-weight:700;color:#191C20;"><span>Bangalore</span><span style="color:#9a979f;">▾</span></div>
+          <div id="city-dd" class="ex-dd">
+            <div class="ex-dd-item" onclick="pickDD('city-dd','city-val','Bangalore')">Bangalore</div>
+            <div class="ex-dd-item" onclick="pickDD('city-dd','city-val','Mumbai')">Mumbai</div>
+            <div class="ex-dd-item" onclick="pickDD('city-dd','city-val','Delhi')">Delhi</div>
+            <div class="ex-dd-item" onclick="pickDD('city-dd','city-val','Pune')">Pune</div>
+          </div>
+        </div>
+        <div style="flex:1;position:relative;">
+          <div style="font-size:11px;font-weight:800;color:#717175;text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px;">Area</div>
+          <div id="area-val" onclick="toggleDD('area-dd')" style="cursor:pointer;display:flex;align-items:center;justify-content:space-between;padding:12px 14px;border-radius:12px;border:1.5px solid #C6C6CA;background:#fff;font-size:14px;font-weight:700;color:#717175;"><span>All areas</span><span style="color:#9a979f;">▾</span></div>
+          <div id="area-dd" class="ex-dd">
+            <div class="ex-dd-item" onclick="pickDD('area-dd','area-val','All areas')">All areas</div>
+            <div class="ex-dd-item" onclick="pickDD('area-dd','area-val','Indiranagar')">Indiranagar</div>
+            <div class="ex-dd-item" onclick="pickDD('area-dd','area-val','Koramangala')">Koramangala</div>
+            <div class="ex-dd-item" onclick="pickDD('area-dd','area-val','HSR Layout')">HSR Layout</div>
+            <div class="ex-dd-item" onclick="pickDD('area-dd','area-val','Whitefield')">Whitefield</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Activity chip row -->
+      <div style="padding:14px 16px 0;">
+        <div style="font-size:11px;font-weight:800;color:#717175;text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px;">Activity</div>
+        <div style="display:flex;gap:6px;overflow-x:auto;padding-right:30px;scrollbar-width:none;">
+          <button class="ex-chip" onclick="exChip(this)">🏋️ Fitness</button>
+          <button class="ex-chip on" onclick="exChip(this)">♟️ Board games</button>
+          <button class="ex-chip" onclick="exChip(this)">🧘 Yoga</button>
+          <button class="ex-chip" onclick="exChip(this)">📚 Book club</button>
+          <button class="ex-chip" onclick="exChip(this)">🎤 Open mic</button>
+          <button class="ex-chip" style="border-style:dashed;color:#7A5900;" onclick="exChip(this)">+ More</button>
+        </div>
+      </div>
+      <div style="padding:10px 16px 0;">
+        <button onclick="toggleMore()" style="background:none;border:none;padding:4px 0;cursor:pointer;font-family:inherit;">
+          <span class="moref" style="color:#7A5900;font-size:12px;font-weight:800;">+ More filters</span>
+          <span style="color:#7A5900;font-size:12px;font-weight:800;"> (Capacity · Partnership · Category)</span>
+        </button>
+        <div id="more-filters" style="display:none;margin-top:4px;">
+          <div class="ex-flabel">Capacity</div>
+          <div style="display:flex;gap:6px;flex-wrap:wrap;">
+            <button class="ex-chip" onclick="exChip(this)">Any size</button>
+            <button class="ex-chip" onclick="exChip(this)">Up to 25</button>
+            <button class="ex-chip" onclick="exChip(this)">25–50</button>
+            <button class="ex-chip" onclick="exChip(this)">50–100</button>
+            <button class="ex-chip" onclick="exChip(this)">100+</button>
+          </div>
+          <div class="ex-flabel">Partnership accepted</div>
+          <div style="display:flex;gap:6px;flex-wrap:wrap;">
+            <button class="ex-chip" onclick="exChip(this)">🎁 Free</button>
+            <button class="ex-chip" onclick="exChip(this)">💰 Flat amount</button>
+            <button class="ex-chip" onclick="exChip(this)">🎟️ Per-head</button>
+            <button class="ex-chip" onclick="exChip(this)">📣 They sponsor</button>
+          </div>
+          <div class="ex-flabel">Category</div>
+          <div style="display:flex;gap:6px;flex-wrap:wrap;">
+            <button class="ex-chip" onclick="exChip(this)">Café</button>
+            <button class="ex-chip" onclick="exChip(this)">Bar</button>
+            <button class="ex-chip" onclick="exChip(this)">Lounge</button>
+            <button class="ex-chip" onclick="exChip(this)">Studio</button>
+            <button class="ex-chip" onclick="exChip(this)">Outdoor</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Venue list -->
+      <div id="vlist" style="padding-top:14px;display:flex;flex-direction:column;gap:20px;"></div>
+           </div><!-- /ltab-explore -->
+
+          </div>
+        </div>
+      </div>
+
+      <!-- FAB + Book -->
+      <button onclick="openBookSheet()" aria-label="Book a venue"
+        style="position:fixed;bottom:calc(28px + env(safe-area-inset-bottom));left:50%;transform:translateX(-50%);height:56px;padding:0 22px 0 18px;border-radius:999px;background:#FABB22;color:#261900;border:4px solid #FCFCFD;font-family:'Lato',sans-serif;font-size:15px;font-weight:800;line-height:1;box-shadow:0 4px 14px rgba(250,187,34,0.45);cursor:pointer;display:flex;align-items:center;gap:8px;z-index:70;">
+        <span style="font-size:22px;line-height:1;font-weight:300;">+</span> Book
+      </button>
+
+      <!-- bottom nav -->
+      <div class="vp-bottom-nav">
+        <div class="vp-bottom-nav-item active" id="lnav-bookings" onclick="leaderTab('bookings')"><div class="vp-bottom-nav-icon">📅</div><span>Bookings</span></div>
+        <div class="vp-bottom-nav-item vp-bottom-nav-item--fab-slot"></div>
+        <div class="vp-bottom-nav-item" id="lnav-explore" onclick="leaderTab('explore')"><div class="vp-bottom-nav-icon">🧭</div><span>Explore</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== L3 VENUE DETAIL (rendered) ===================== -->
+  <div class="screen-host" data-screen="venue-detail">
+    <div class="syc-screen vp-detail-screen" id="l3-screen">
+      <div class="vp-detail-topbar">
+        <button class="syc-back-btn white-bg" onclick="back()" aria-label="Back">
+          <svg viewBox="0 0 24 24" fill="none" width="24" height="24"><path d="M15 18L9 12L15 6" stroke="#191C20" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <div style="font-family:'Lato',sans-serif;font-size:13px;font-weight:700;color:#46474A;">Venue</div>
+        <div style="width:48px"></div>
+      </div>
+      <div id="l3-body"></div>
+    </div>
+    <div class="vp-sticky-cta">
+      <button onclick="bookVenue(currentVenueId)"
+        style="display:flex;align-items:center;justify-content:center;gap:10px;width:100%;padding:16px 20px;background:#FABB22;color:#191C20;border:none;border-radius:14px;font-family:'Lato',sans-serif;font-size:16px;font-weight:800;cursor:pointer;box-shadow:0 4px 16px rgba(250,187,34,0.35);">
+        <span style="font-size:18px;line-height:1;">📅</span> Request to book
+      </button>
+      <button onclick="openReachOut()"
+        style="display:flex;align-items:center;justify-content:center;gap:9px;width:100%;padding:14px 20px;margin-top:9px;background:#fff;color:#191C20;border:1.5px solid #C6C6CA;border-radius:14px;font-family:'Lato',sans-serif;font-size:15px;font-weight:800;cursor:pointer;">
+        <span style="font-size:17px;line-height:1;">💬</span> Talk to venue on WhatsApp
+      </button>
+    </div>
+  </div>
+
+  <!-- ===================== L7 RAISE REQUEST (book) ===================== -->
+  <div class="screen-host" data-screen="venue-flow-raise">
+    <div class="syc-screen q-screen">
+      <div class="q-topbar">
+        <button class="q-nav-btn" onclick="back()" aria-label="Back">
+          <svg viewBox="0 0 24 24" fill="none" width="24" height="24"><path d="M15 18L9 12L15 6" stroke="#191C20" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <div style="flex:1;text-align:center;font-family:'Lato',sans-serif;font-size:14px;font-weight:700;color:#191C20;">Request a booking</div>
+        <button class="q-nav-btn" onclick="back()" aria-label="Close">
+          <svg viewBox="0 0 24 24" fill="none" width="24" height="24"><path d="M18 6L6 18M6 6l12 12" stroke="#191C20" stroke-width="2" stroke-linecap="round"/></svg>
+        </button>
+      </div>
+      <div class="q-body">
+        <div class="vp-selected-venue-card">
+          <div class="vp-selected-venue-thumb" id="raise-vthumb" style="background-image:url('assets/img/hive.jpg');background-size:cover;background-position:center;"></div>
+          <div class="vp-selected-venue-body">
+            <div class="vp-selected-venue-name" id="raise-vname">The Hive Café</div>
+            <div class="vp-selected-venue-meta" id="raise-vmeta">📍 Indiranagar, Bangalore</div>
+          </div>
+        </div>
+
+        <div class="vp-form-section">
+          <div class="vp-form-label">Which club is this for?</div>
+          <div class="rz-select">📚 Indiranagar Book Club · Book club <span style="color:#9a979f;">▾</span></div>
+        </div>
+
+        <div class="vp-form-section">
+          <div class="vp-form-label">What kind of booking?</div>
+          <div class="vp-booking-type-toggle">
+            <button class="vp-toggle-pill active" onclick="radioChip(this)">
+              <div class="vp-toggle-pill-emoji">⚡</div><div class="vp-toggle-pill-title">One-time event</div><div class="vp-toggle-pill-sub">A single meetup on a specific date</div>
+            </button>
+            <button class="vp-toggle-pill" onclick="radioChip(this)">
+              <div class="vp-toggle-pill-emoji">🔁</div><div class="vp-toggle-pill-title">Recurring</div><div class="vp-toggle-pill-sub">Weekly meetups for a defined duration</div>
+            </button>
+          </div>
+        </div>
+
+        <div class="vp-form-section">
+          <div class="vp-form-label">Date</div>
+          <div class="vp-day-picker">
+            <button class="vp-day-chip" onclick="radioChip(this)">Today</button>
+            <button class="vp-day-chip active" onclick="radioChip(this)">Thu 26</button>
+            <button class="vp-day-chip" onclick="radioChip(this)">Fri 27</button>
+            <button class="vp-day-chip" onclick="radioChip(this)">Sat 28</button>
+            <button class="vp-day-chip" onclick="radioChip(this)">Sun 29</button>
+          </div>
+        </div>
+
+        <div class="vp-form-section">
+          <div class="vp-form-row" style="display:flex;gap:10px;">
+            <div style="flex:1;"><div class="vp-form-label">Start</div><input class="vp-form-input" value="6:00 pm" /></div>
+            <div style="flex:1;"><div class="vp-form-label">End</div><input class="vp-form-input" value="9:00 pm" /></div>
+          </div>
+        </div>
+
+        <div class="vp-form-section">
+          <div class="vp-form-label">Expected attendees</div>
+          <input class="vp-form-input" type="number" value="14" />
+        </div>
+
+        <div class="vp-form-section">
+          <div class="vp-form-label">Partnership you've agreed on</div>
+          <div class="rz-select">🎟️ Per-head <span style="color:#9a979f;">▾</span></div>
+        </div>
+
+        <div class="vp-form-section">
+          <div class="vp-form-label">What do you need from the venue?</div>
+          <input class="vp-form-input" placeholder="e.g. Mics × 2, projector, water cups" />
+        </div>
+
+        <div class="vp-form-section">
+          <div class="vp-form-label">Message to venue (optional)</div>
+          <textarea class="vp-form-input" style="min-height:80px;resize:none;" placeholder="Anything else they should know about this booking?"></textarea>
+        </div>
+
+        <div style="margin:4px 0 8px;padding:12px 14px;background:#FFF8E6;border:1px solid #FCE7B0;border-radius:12px;font-family:'Lato',sans-serif;font-size:12.5px;color:#7A5900;line-height:1.45;">
+          💬 <strong>What happens next:</strong> the venue gets a WhatsApp message with Yes / No buttons. You'll see the status update in your inbox.
+        </div>
+      </div>
+      <div class="q-footer" style="justify-content:stretch;">
+        <button class="login-btn-primary" style="width:100%;" onclick="go('venue-flow-success')">Send booking request</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== L9 SUCCESS ===================== -->
+  <div class="screen-host" data-screen="venue-flow-success">
+    <div class="syc-screen">
+      <div class="vp-success-screen">
+        <div class="vp-success-icon">
+          <svg viewBox="0 0 24 24" fill="none" width="40" height="40"><path d="M20 6L9 17l-5-5" stroke="#00391D" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <h2 class="syc-heading">Request sent!</h2>
+        <p class="syc-subheading" style="margin-bottom:32px;white-space:pre-line;">The venue has a WhatsApp message with Yes / No buttons.
+You'll get notified when they respond.</p>
+        <button class="login-btn-primary" onclick="openLeaderHome('bookings')">Back to bookings</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== V0.75 PARTNER DECISION ===================== -->
+  <div class="screen-host" data-screen="partner-decide">
+    <div class="syc-screen decision-screen">
+      <div style="position:absolute;top:60px;left:16px;z-index:10;">
+        <button class="syc-back-btn white-bg" onclick="back()" aria-label="Back">
+          <svg viewBox="0 0 24 24" fill="none" width="24" height="24"><path d="M15 18L9 12L15 6" stroke="#191C20" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+      </div>
+      <div class="decision-body">
+        <div class="decision-card-group decision-animate">
+          <img src="assets/miffy_wave.svg" alt="Miffy" class="decision-miffy" />
+          <div class="decision-card">
+            <div class="decision-pill">🏟️ List your space on Misfits</div>
+            <h2 class="decision-heading">List your venue.<br/>Start getting clubs.</h2>
+            <p style="font-family:'Lato',sans-serif;font-size:14px;line-height:1.5;color:#46474A;text-align:center;margin:8px 0 22px;">
+              Set up takes <strong>2 minutes</strong>. Bookings come in via WhatsApp. Accept or decline with one tap.
+            </p>
+            <div class="decision-buttons">
+              <button class="decision-btn primary" onclick="go('partner-form')">
+                <span class="btn-icon">🏪</span><span class="btn-text">List my venue</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== VENUE-LEAD — list my venue (6-step form) ===================== -->
+  <div class="screen-host" data-screen="partner-form">
+    <div class="syc-container"><div class="syc-content"><div class="syc-screen q-screen">
+      <div class="q-topbar">
+        <button class="q-nav-btn" onclick="formBack()" aria-label="Back">
+          <svg viewBox="0 0 24 24" fill="none" width="24" height="24"><path d="M15 18L9 12L15 6" stroke="#191C20" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <div class="q-progress-track"><div class="q-progress-fill" id="vl-progress" style="width:16.6%"></div></div>
+        <button class="q-nav-btn" onclick="go('decision')" aria-label="Close">
+          <svg viewBox="0 0 24 24" fill="none" width="24" height="24"><path d="M18 6L6 18M6 6l12 12" stroke="#191C20" stroke-width="2" stroke-linecap="round"/></svg>
+        </button>
+      </div>
+
+      <div class="q-body">
+        <!-- Step 1 -->
+        <div class="vl-step" data-vlstep="1">
+          <div class="q-question"><div class="q-question-label">Step 1 of 6</div><div class="q-question-text">Tell us about the venue</div></div>
+          <div class="q-content">
+            <div style="margin-bottom:24px;">
+              <label class="vl-field-label">Venue Name <span style="color:#e74c3c">*</span></label>
+              <input class="q-text-input vl-input-filled" type="text" value="The Loft by Anaya" placeholder="e.g. The Hive Cafe, SportZone Arena" />
+            </div>
+            <div>
+              <label class="vl-field-label">Venue Type <span style="color:#e74c3c">*</span><span style="margin-left:8px;font-size:11px;font-weight:600;color:#717175;">Pick up to 2</span></label>
+              <div style="display:flex;flex-wrap:wrap;gap:10px;margin-top:2px;">
+                <button class="vl-type-chip" onclick="chip(this)">Cafe</button>
+                <button class="vl-type-chip" onclick="chip(this)">Pub &amp; Bar</button>
+                <button class="vl-type-chip selected" onclick="chip(this)">Studio</button>
+                <button class="vl-type-chip" onclick="chip(this)">Sports Venue</button>
+                <button class="vl-type-chip selected" onclick="chip(this)">Community Space</button>
+                <button class="vl-type-chip" onclick="chip(this)">Other</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 2 -->
+        <div class="vl-step" data-vlstep="2" style="display:none;">
+          <div class="q-question"><div class="q-question-label">Step 2 of 6</div><div class="q-question-text">Where is this venue?</div></div>
+          <div class="q-content">
+            <div style="margin-bottom:20px;"><label class="vl-field-label">Address <span style="color:#e74c3c">*</span></label>
+              <input class="q-text-input vl-input-filled" type="text" value="14, 12th Main, Indiranagar" placeholder="Full street address" /></div>
+            <div style="margin-bottom:20px;"><label class="vl-field-label">City <span style="color:#e74c3c">*</span></label>
+              <input class="q-text-input vl-input-filled" type="text" value="Bangalore" placeholder="Type to search city…" /></div>
+            <div style="margin-bottom:20px;"><label class="vl-field-label">Area <span style="color:#e74c3c">*</span></label>
+              <input class="q-text-input vl-input-filled" type="text" value="Indiranagar" placeholder="Type to search area…" /></div>
+            <div><label class="vl-field-label">Google Maps Link <span style="color:#e74c3c">*</span></label>
+              <input class="q-text-input vl-input-filled" type="url" value="https://maps.google.com/the-loft" placeholder="https://maps.google.com/…" /></div>
+          </div>
+        </div>
+
+        <!-- Step 3 -->
+        <div class="vl-step" data-vlstep="3" style="display:none;">
+          <div class="q-question"><div class="q-question-label">Step 3 of 6</div><div class="q-question-text">What does this venue offer?</div></div>
+          <div class="q-content">
+            <div style="margin-bottom:24px;">
+              <label class="vl-field-label">Sitting Capacity <span style="color:#e74c3c">*</span></label>
+              <div style="display:flex;gap:10px;margin-top:4px;">
+                <button class="vl-type-chip" onclick="radioChip(this)">&lt; 25</button>
+                <button class="vl-type-chip selected" onclick="radioChip(this)">25–50</button>
+                <button class="vl-type-chip" onclick="radioChip(this)">50+</button>
+              </div>
+            </div>
+            <div style="margin-bottom:24px;">
+              <label class="vl-field-label">Seating</label>
+              <div style="font-family:'Lato',sans-serif;font-size:12px;color:#717175;margin-top:2px;margin-bottom:8px;">Indoor, outdoor, or both?</div>
+              <div style="display:flex;flex-wrap:wrap;gap:10px;">
+                <button class="vl-amenity-chip" onclick="radioChip(this)">Indoor only</button>
+                <button class="vl-amenity-chip" onclick="radioChip(this)">Outdoor only</button>
+                <button class="vl-amenity-chip selected" onclick="radioChip(this)">Both indoor and outdoor</button>
+              </div>
+            </div>
+            <div style="margin-bottom:24px;">
+              <label class="vl-field-label">Activities you're open to hosting</label>
+              <div style="font-family:'Lato',sans-serif;font-size:12px;color:#717175;margin-top:2px;margin-bottom:10px;">Pick from common ones, or search for anything specific.</div>
+              <input class="q-text-input" placeholder="🔍 Search activities…" style="margin-bottom:10px;" />
+              <div style="display:flex;flex-wrap:wrap;gap:10px;">
+                <button class="vl-amenity-chip selected" onclick="chip(this)">📚 Book club</button>
+                <button class="vl-amenity-chip" onclick="chip(this)">♟️ Chess</button>
+                <button class="vl-amenity-chip" onclick="chip(this)">🧘 Yoga</button>
+                <button class="vl-amenity-chip selected" onclick="chip(this)">🎲 Board games</button>
+                <button class="vl-amenity-chip" onclick="chip(this)">🎤 Open mic</button>
+                <button class="vl-amenity-chip" onclick="chip(this)">💃 Dance</button>
+              </div>
+            </div>
+            <div style="margin-bottom:24px;">
+              <label class="vl-field-label">Suitable for <span style="color:#e74c3c">*</span></label>
+              <div style="font-family:'Lato',sans-serif;font-size:12px;color:#717175;margin-top:2px;margin-bottom:10px;">Other event types you can host — beyond your regular clubs.</div>
+              <div style="display:flex;flex-wrap:wrap;gap:10px;">
+                <button class="vl-amenity-chip selected" onclick="chip(this)">🎪 Events</button>
+                <button class="vl-amenity-chip" onclick="chip(this)">🏢 Corporate parties</button>
+                <button class="vl-amenity-chip selected" onclick="chip(this)">🎂 Birthdays</button>
+                <button class="vl-amenity-chip" onclick="chip(this)">🎓 Launches</button>
+                <button class="vl-amenity-chip selected" onclick="chip(this)">📷 Shoots</button>
+                <button class="vl-amenity-chip" onclick="chip(this)">🎙️ Podcasts</button>
+              </div>
+            </div>
+            <div>
+              <label class="vl-field-label">Amenities <span style="font-weight:400;text-transform:none;letter-spacing:0;color:#aaa;">(optional)</span></label>
+              <div style="font-family:'Lato',sans-serif;font-size:12px;color:#717175;margin-top:2px;margin-bottom:10px;">What does your space have? Pick all that apply.</div>
+              <div style="display:flex;flex-wrap:wrap;gap:10px;">
+                <button class="vl-amenity-chip selected" onclick="chip(this)">📶 WiFi</button>
+                <button class="vl-amenity-chip selected" onclick="chip(this)">🔌 Power points</button>
+                <button class="vl-amenity-chip selected" onclick="chip(this)">❄️ AC</button>
+                <button class="vl-amenity-chip" onclick="chip(this)">🖥️ Projector</button>
+                <button class="vl-amenity-chip selected" onclick="chip(this)">🅿️ Parking</button>
+                <button class="vl-amenity-chip" onclick="chip(this)">🔊 Sound system</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 4 -->
+        <div class="vl-step" data-vlstep="4" style="display:none;">
+          <div class="q-question"><div class="q-question-label">Step 4 of 6</div><div class="q-question-text">How do you want to partner?</div></div>
+          <div class="q-content">
+            <label class="vl-field-label">Partnership types you'd consider <span style="color:#e74c3c">*</span></label>
+            <div style="font-family:'Lato',sans-serif;font-size:12px;color:#717175;margin-top:2px;margin-bottom:8px;">Pick all that work for you. Leaders only see venues whose deal type matches what they're offering.</div>
+            <div style="display:flex;flex-direction:column;gap:8px;">
+              <button class="vl-deal" onclick="chip(this)"><div class="t">🎁 Free</div><div class="s">You host the leader without charging anything.</div></button>
+              <button class="vl-deal" onclick="chip(this)"><div class="t">💰 Flat amount</div><div class="s">The leader pays you a set amount every time, no matter how many people show up.</div></button>
+              <button class="vl-deal selected" onclick="chip(this)"><div class="t">🎟️ Per-head</div><div class="s">Each person who comes pays you directly, either for food and drinks or as an entry fee.</div></button>
+              <button class="vl-deal selected" onclick="chip(this)"><div class="t">📣 We sponsor the leader</div><div class="s">You pay the leader for bringing people to your place.</div></button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 5 -->
+        <div class="vl-step" data-vlstep="5" style="display:none;">
+          <div class="q-question"><div class="q-question-label">Step 5 of 6</div><div class="q-question-text">Who handles booking requests?</div></div>
+          <div class="q-content">
+            <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:20px;">
+              <button class="vl-poc selected" onclick="radioChip(this)"><div class="t">I'll handle them myself</div><div class="s">You'll get booking requests on WhatsApp and approve them yourself.</div></button>
+              <button class="vl-poc" onclick="radioChip(this)"><div class="t">Someone on my team</div><div class="s">Manager, front desk — whoever handles bookings day-to-day.</div></button>
+            </div>
+            <div style="display:flex;gap:12px;margin-bottom:12px;">
+              <div style="flex:1;"><label class="vl-field-label">Your Name <span style="color:#e74c3c">*</span></label>
+                <input class="q-text-input vl-input-filled" type="text" value="Anaya R." placeholder="Your name" /></div>
+              <div style="flex:1;"><label class="vl-field-label">Your Phone <span style="color:#e74c3c">*</span></label>
+                <input class="q-text-input vl-input-filled" type="tel" value="98765 43210" placeholder="98765 43210" /></div>
+            </div>
+            <div style="margin-bottom:16px;font-size:12px;color:#46474A;line-height:1.4;font-family:'Lato',sans-serif;">We'll create your Misfits account with this number. When you log in, you'll see this venue.</div>
+          </div>
+        </div>
+
+        <!-- Step 6 -->
+        <div class="vl-step" data-vlstep="6" style="display:none;">
+          <div class="q-question"><div class="q-question-label">Step 6 of 6</div><div class="q-question-text">Describe your space</div></div>
+          <div class="q-content">
+            <div style="margin-bottom:20px;">
+              <label class="vl-field-label">Venue Photos <span style="font-weight:400;text-transform:none;letter-spacing:0;color:#aaa;">(optional)</span></label>
+              <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:6px;">
+                <div style="aspect-ratio:1;border-radius:14px;overflow:hidden;"><img src="assets/img/studio.jpg" style="width:100%;height:100%;object-fit:cover;display:block;" /></div>
+                <div style="aspect-ratio:1;border-radius:14px;overflow:hidden;"><img src="assets/img/canvas.jpg" style="width:100%;height:100%;object-fit:cover;display:block;" /></div>
+                <div style="aspect-ratio:1;border-radius:14px;border:1.5px dashed #C6C6CA;background:#fff;display:flex;align-items:center;justify-content:center;font-size:26px;color:#bdbdbd;">＋</div>
+              </div>
+            </div>
+            <div>
+              <label class="vl-field-label">Description <span style="font-weight:400;text-transform:none;letter-spacing:0;color:#aaa;">(optional)</span></label>
+              <textarea class="q-textarea" placeholder="Tell leaders what makes your space special…">A bright loft with sprung floors and big windows — made for movement, workshops and small gatherings. Easy parking, great light all day.</textarea>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="q-footer">
+        <button class="q-next-btn active" id="vl-next" onclick="formNext()" aria-label="Continue">
+          <svg viewBox="0 0 24 24" fill="none" width="24" height="24"><path d="M9 6l6 6-6 6" stroke="#261900" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <button class="login-btn-primary" id="vl-submit" style="width:100%;display:none;" onclick="go('venue-owner')">List my venue</button>
+      </div>
+    </div></div></div>
+  </div>
+
+  <!-- ===================== V1 VENUE HOME (dashboard) ===================== -->
+  <div class="screen-host" data-screen="venue-owner">
+    <div class="syc-screen vp-detail-screen" style="height:100dvh;min-height:100dvh;padding-bottom:0;overflow:hidden;">
+      <!-- brand bar -->
+      <div class="vp-detail-topbar">
+        <img src="assets/misfits_logo.png" alt="Misfits" class="vp-brand-logo" />
+        <div class="vp-appbar-actions">
+          <button class="vp-appbar-help" aria-label="Help" onclick="toast('Help &amp; support — chat with the Misfits team')">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="#191C20" stroke-width="2"/><path d="M9.5 9a2.5 2.5 0 015 0c0 2-2.5 2-2.5 4M12 17h.01" stroke="#191C20" stroke-width="2" stroke-linecap="round"/></svg>
+            <span>Help</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- venue identity card -->
+      <div class="vp-venue-card">
+        <div class="vp-venue-card-top">
+          <div class="vp-switcher-v2-current" style="cursor:pointer;" onclick="go('venue-edit-profile')">
+            <div style="position:relative;width:46px;height:46px;flex-shrink:0;" title="Profile 70% complete — tap to finish">
+              <svg width="46" height="46" style="position:absolute;inset:0;transform:rotate(-90deg);">
+                <circle cx="23" cy="23" r="21.75" fill="none" stroke="#EAEAED" stroke-width="2.5"></circle>
+                <circle cx="23" cy="23" r="21.75" fill="none" stroke="#FABB22" stroke-width="2.5" stroke-linecap="round" stroke-dasharray="95.6 136.7"></circle>
+              </svg>
+              <div style="position:absolute;inset:4px;display:flex;align-items:center;justify-content:center;">
+                <div class="vp-switcher-v2-avatar" style="width:38px;height:38px;background-image:url('assets/img/studio.jpg');background-size:cover;background-position:center;border-radius:50%;"></div>
+              </div>
+              <div style="position:absolute;right:-6px;bottom:-4px;background:#FABB22;color:#261900;font-family:'Lato',sans-serif;font-size:9px;font-weight:800;padding:2px 5px;border-radius:999px;border:1.5px solid #FFFFFF;line-height:1;">70%</div>
+            </div>
+            <div class="vp-venue-id">
+              <div class="vp-venue-id-name">The Loft by Anaya</div>
+              <div class="vp-venue-id-area">Indiranagar, Bangalore</div>
+            </div>
+          </div>
+          <div class="vp-venue-iconcluster">
+            <button class="vp-venue-iconbtn" title="Edit" onclick="go('venue-edit-profile')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#261900" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 113 3L7 19l-4 1 1-4z"/></svg></button>
+            <button class="vp-venue-iconbtn" title="Share" onclick="openShare()"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#261900" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.6" y1="13.5" x2="15.4" y2="17.5"/><line x1="15.4" y1="6.5" x2="8.6" y2="10.5"/></svg></button>
+            <button class="vp-venue-iconbtn" title="Preview" onclick="go('venue-detail','hive')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#261900" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
+          </div>
+        </div>
+      </div>
+
+      <!-- scroll area -->
+      <div style="position:relative;flex:1;min-height:0;">
+        <div class="vf-scroll" style="position:absolute;inset:0;overflow-y:auto;-webkit-overflow-scrolling:touch;">
+          <div style="padding-bottom:100px;">
+
+           <div id="tab-bookings">
+            <!-- urgent pill -->
+            <div class="vp-urgent-pill" onclick="openNewReqs()">
+              <div class="vp-urgent-pill-icon">3</div>
+              <div class="vp-urgent-pill-body"><div class="vp-urgent-pill-title">3 new booking requests</div></div>
+              <div class="vp-urgent-pill-arrow">→</div>
+            </div>
+
+            <!-- calendar -->
+            <div class="vp-merged-cal-wrap" style="padding:0 14px;">
+              <div class="vp-cal-header">
+                <button class="vp-cal-nav" id="cal-prev" style="opacity:.35;" onclick="goMonth(-1)">‹</button>
+                <div class="vp-cal-month" id="cal-month">June 2026</div>
+                <button class="vp-cal-nav" id="cal-next" onclick="goMonth(1)">›</button>
+              </div>
+              <div class="vp-cal-legend vp-cal-legend--top">
+                <span><span class="vp-cal-dot booked"></span>Confirmed</span>
+                <span><span class="vp-cal-dot pending"></span>New</span>
+                <span><span class="vp-cal-dot blocked"></span>Off</span>
+                <span><span class="vp-cal-dot today"></span>Today</span>
+              </div>
+              <div class="vp-cal-grid" id="cal-grid"></div>
+            </div>
+
+            <!-- bookings drawer (JS-rendered, driven by the selected calendar date) -->
+            <div id="v1-bookings-drawer" class="vp-bookings-drawer">
+              <div class="vp-drawer-handle"></div>
+              <div id="dash-drawer"></div>
+            </div>
+           </div><!-- /tab-bookings -->
+
+           <!-- Explore clubs tab (real V1Clubs) -->
+           <div id="tab-clubs" style="display:none;">
+             <!-- anchor row -->
+             <div class="vp-clubs-anchors">
+               <div class="vp-clubs-anchor active">Your clubs <span class="vp-clubs-anchor-count">1</span></div>
+               <div class="vp-clubs-anchor" onclick="scrollToExplore()">Explore other clubs <span class="vp-clubs-anchor-count">4</span>
+                 <svg class="vp-clubs-anchor-arrow" width="13" height="13" viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12l7 7 7-7" stroke="#1F6080" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+               </div>
+             </div>
+
+             <!-- Your clubs -->
+             <div class="vp-clubs-section-head">
+               <div class="vp-clubs-section-label">Your clubs <span class="vp-clubs-section-count">1</span></div>
+               <div class="vp-clubs-section-sub">All clubs you've hosted · newest first · older ones fade</div>
+             </div>
+             <div class="vp-active-clubs">
+               <div class="vp-active-club-card" onclick="toast('Opening Indiranagar Book Club…')">
+                 <div class="vp-active-club-avatar">📚</div>
+                 <div class="vp-active-club-body">
+                   <div class="vp-active-club-name">Indiranagar Book Club</div>
+                   <div class="vp-active-club-leader">Book club · Aisha</div>
+                   <div class="vp-active-club-sub">Recurring · <span class="vp-days">last 2 days back</span></div>
+                 </div>
+                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" style="flex-shrink:0;color:#ABABAE;"><path d="M9 18l6-6-6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+               </div>
+             </div>
+
+             <div class="vp-clubs-divider"></div>
+
+             <!-- Explore other clubs -->
+             <div id="explore-section-anchor"></div>
+             <div class="vp-clubs-section-head">
+               <div class="vp-clubs-section-label">Explore other clubs <span class="vp-clubs-section-count">4</span></div>
+               <div class="vp-clubs-section-sub">Public clubs you haven't hosted yet · reach out to invite them</div>
+             </div>
+
+             <div class="vp-filter-row" style="padding-top:8px;">
+               <div class="vp-chip active" onclick="clubFilter(this)">All activities</div>
+               <div class="vp-chip" onclick="clubFilter(this)">📚 Book club</div>
+               <div class="vp-chip" onclick="clubFilter(this)">🎤 Comedy</div>
+               <div class="vp-chip" onclick="clubFilter(this)">🧘 Yoga</div>
+               <div class="vp-chip" onclick="clubFilter(this)">💃 Dance</div>
+               <div class="vp-chip" onclick="clubFilter(this)">🎬 Film</div>
+               <div class="vp-chip" onclick="clubFilter(this)">🏃 Running</div>
+             </div>
+
+             <div class="vp-venues-grid" id="clubs-grid"></div>
+           </div><!-- /tab-clubs -->
+
+          </div>
+        </div>
+      </div>
+
+      <!-- FAB — docks into the bottom nav's centre slot (real V1VenueHome placement) -->
+      <button aria-label="Add event" onclick="openFab()"
+        style="position:fixed;bottom:calc(28px + env(safe-area-inset-bottom));left:50%;transform:translateX(-50%);height:56px;padding:0 22px 0 18px;border-radius:999px;background:#FABB22;color:#261900;border:4px solid #FCFCFD;font-family:'Lato',sans-serif;font-size:15px;font-weight:800;line-height:1;box-shadow:0 4px 14px rgba(250,187,34,0.45);cursor:pointer;display:flex;align-items:center;gap:8px;z-index:70;">
+        <span style="font-size:22px;line-height:1;font-weight:300;">+</span> Add event
+      </button>
+
+      <!-- bottom nav -->
+      <div class="vp-bottom-nav">
+        <div class="vp-bottom-nav-item active" id="nav-bookings" onclick="switchTab('bookings')">
+          <div class="vp-bottom-nav-icon">📨<span class="vp-bottom-nav-badge">3</span></div>
+          <span>Bookings</span>
+        </div>
+        <div class="vp-bottom-nav-item vp-bottom-nav-item--fab-slot"></div>
+        <div class="vp-bottom-nav-item" id="nav-clubs" onclick="switchTab('clubs')">
+          <div class="vp-bottom-nav-icon">🤝</div>
+          <span>Explore clubs</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== V5 EDIT PROFILE ===================== -->
+  <div class="screen-host" data-screen="venue-edit-profile">
+    <div class="syc-screen vp-detail-screen">
+      <div class="vp-detail-topbar">
+        <button class="syc-back-btn white-bg" onclick="back()" aria-label="Back">
+          <svg viewBox="0 0 24 24" fill="none" width="24" height="24"><path d="M15 18L9 12L15 6" stroke="#191C20" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <div style="font-family:'Lato',sans-serif;font-size:14px;font-weight:700;color:#191C20;">Edit your venue</div>
+        <div style="width:48px"></div>
+      </div>
+
+      <div style="padding:16px 20px 8px;font-family:'Lato',sans-serif;font-size:13px;color:#46474A;">Tap any section to edit. Changes save when you save the section.</div>
+
+      <div class="vp-preview-card" onclick="go('venue-detail','hive')">
+        <div class="vp-preview-thumb" style="background-image:url('assets/img/studio.jpg');background-size:cover;background-position:center;"></div>
+        <div class="vp-preview-body">
+          <div class="vp-preview-overline">Preview your live page</div>
+          <div class="vp-preview-title">See how leaders see you →</div>
+          <div class="vp-preview-url">misfits.com/v/the-loft-by-anaya</div>
+        </div>
+      </div>
+
+      <div class="vp-section">
+        <div class="vp-section-title">Photos<button class="vp-section-edit-btn" onclick="toast('Edit photos')">Edit</button></div>
+        <div style="display:flex;gap:8px;overflow-x:auto;padding-bottom:2px;">
+          <div style="flex:0 0 33%;position:relative;padding-top:33%;border-radius:10px;overflow:hidden;background:#F2EFEA;"><img src="assets/img/studio.jpg" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;" /></div>
+          <div style="flex:0 0 33%;position:relative;padding-top:33%;border-radius:10px;overflow:hidden;background:#F2EFEA;"><img src="assets/img/canvas.jpg" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;" /></div>
+        </div>
+      </div>
+
+      <div class="vp-section">
+        <div class="vp-section-title">Basic details<button class="vp-section-edit-btn" onclick="toast('Edit basic details')">Edit</button></div>
+        <div class="vp-readonly-row"><span class="vp-readonly-label">Venue name</span><span class="vp-readonly-value">The Loft by Anaya</span></div>
+        <div class="vp-readonly-row"><span class="vp-readonly-label">City</span><span class="vp-readonly-value">Bangalore</span></div>
+        <div class="vp-readonly-row"><span class="vp-readonly-label">Address</span><span class="vp-readonly-value">14, 12th Main, Indiranagar</span></div>
+        <div class="vp-readonly-row"><span class="vp-readonly-label">Map link</span><span class="vp-readonly-value" style="color:#1F6080;">Open in Maps</span></div>
+        <div class="vp-readonly-row"><span class="vp-readonly-label">Category</span><span class="vp-readonly-value">Studio · Community Space</span></div>
+        <div class="vp-readonly-row"><span class="vp-readonly-label">Capacity</span><span class="vp-readonly-value">25–50</span></div>
+        <div class="vp-readonly-row"><span class="vp-readonly-label">Seating</span><span class="vp-readonly-value">Both indoor and outdoor</span></div>
+        <div class="vp-readonly-row last"><div style="display:flex;flex-direction:column;gap:4px;width:100%;"><span class="vp-readonly-label">Description</span><span style="font-family:'Lato',sans-serif;font-size:13px;color:#46474A;line-height:18px;">A bright loft with sprung floors and big windows — made for movement, workshops and small gatherings.</span></div></div>
+      </div>
+
+      <div class="vp-section">
+        <div class="vp-section-title">Suitable for<button class="vp-section-edit-btn" onclick="toast('Edit event types')">Edit</button></div>
+        <div class="vp-amenities-grid"><div class="vp-amenity-chip">🎪 Events</div><div class="vp-amenity-chip">🎂 Birthdays</div><div class="vp-amenity-chip">📷 Shoots</div></div>
+      </div>
+
+      <div class="vp-section">
+        <div class="vp-section-title">Partnerships you accept<button class="vp-section-edit-btn" onclick="toast('Edit partnerships')">Edit</button></div>
+        <div class="vp-offerings">
+          <div class="vp-offering-card"><div class="vp-offering-icon" style="background:#BFE0EE;">🎟️</div><div class="vp-offering-text"><div class="vp-offering-name">Per-head</div><div class="vp-offering-desc">Each person who comes pays you directly, either for food and drinks or as an entry fee.</div></div></div>
+          <div class="vp-offering-card"><div class="vp-offering-icon" style="background:#FFEFD6;">📣</div><div class="vp-offering-text"><div class="vp-offering-name">We sponsor the leader</div><div class="vp-offering-desc">You pay the leader for bringing people to your place.</div></div></div>
+        </div>
+      </div>
+
+      <div class="vp-section">
+        <div class="vp-section-title">Amenities<button class="vp-section-edit-btn" onclick="toast('Edit amenities')">Edit</button></div>
+        <div class="vp-amenities-grid"><div class="vp-amenity-chip">WiFi</div><div class="vp-amenity-chip">A/C</div><div class="vp-amenity-chip">Restrooms</div><div class="vp-amenity-chip">Projector</div><div class="vp-amenity-chip">Sound</div><div class="vp-amenity-chip">Parking</div><div class="vp-amenity-chip">F&amp;B</div></div>
+      </div>
+
+      <div class="vp-section">
+        <div class="vp-section-title">Cover charge<button class="vp-section-edit-btn" onclick="toast('Edit cover charge')">Edit</button></div>
+        <div class="vp-readonly-row"><span class="vp-readonly-label">Applies?</span><span class="vp-readonly-value">Yes</span></div>
+        <div class="vp-readonly-row"><span class="vp-readonly-label">Amount</span><span class="vp-readonly-value">₹200</span></div>
+        <div class="vp-readonly-row last"><span class="vp-readonly-label">Redeemable for</span><span class="vp-readonly-value">Food &amp; beverages</span></div>
+      </div>
+
+      <div class="vp-section">
+        <div class="vp-section-title">Team<button class="vp-section-edit-btn" onclick="toast('Manage team')">Edit</button></div>
+        <div style="display:flex;align-items:center;gap:12px;padding:4px 0;">
+          <div style="width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,#FFEFD6,#FABB22);display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:800;color:#7A5900;flex-shrink:0;">A</div>
+          <div style="flex:1;min-width:0;"><div style="font-family:'Lato',sans-serif;font-size:14px;font-weight:800;color:#191C20;">Anaya R.</div><div style="font-family:'Lato',sans-serif;font-size:12px;color:#717175;">+91 98765 43210</div></div>
+          <span class="vp-pill" style="flex-shrink:0;">Booking POC</span>
+        </div>
+        <button class="vp-section-edit-btn" style="margin-top:10px;" onclick="toast('Add a teammate')">+ Add a teammate</button>
+      </div>
+      <div style="height:24px;"></div>
+    </div>
+  </div>
+
+  <!-- ===================== ReachOut modal (L3 Talk) ===================== -->
+  <div id="reachout" class="syc-modal-overlay" style="display:none;" onclick="if(event.target===this)closeReachOut()">
+    <div class="vp-modal" style="max-width:360px;padding:24px;">
+      <div class="vp-modal-pill">🤝 Before reaching out</div>
+      <div class="vp-modal-title" style="font-size:22px;line-height:28px;margin-top:10px;">Cover two things</div>
+      <div style="margin-top:22px;display:flex;flex-direction:column;gap:14px;">
+        <div style="background:#FFF8E6;border:1px solid #FCE7B0;border-radius:14px;padding:14px 16px;">
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px;">
+            <span style="width:26px;height:26px;border-radius:999px;background:#FABB22;color:#261900;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;flex-shrink:0;">1</span>
+            <span style="font-size:12px;font-weight:800;color:#7A5900;text-transform:uppercase;letter-spacing:.8px;">You</span>
+          </div>
+          <div style="font-size:15px;font-weight:600;line-height:22px;color:#191C20;margin-left:36px;">Who you are + what your club does</div>
+        </div>
+        <div style="background:#EEF6FB;border:1px solid #C5E3F1;border-radius:14px;padding:14px 16px;">
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
+            <span style="width:26px;height:26px;border-radius:999px;background:#1F6080;color:#FFF;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;flex-shrink:0;">2</span>
+            <span style="font-size:12px;font-weight:800;color:#1F6080;text-transform:uppercase;letter-spacing:.8px;">Pitch a partnership</span>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:6px;">
+            <div class="vp-deal-expand" onclick="dealToggle(this)" style="background:#fff;border:1px solid #D7E5EC;border-radius:10px;padding:12px 14px;">
+              <div class="vp-deal-row"><span style="font-family:'Lato',sans-serif;font-size:14px;font-weight:700;color:#191C20;">Free</span><svg class="vp-deal-caret" width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="#46474A" stroke-width="2" stroke-linecap="round"/></svg></div>
+              <div class="vp-deal-explain">You and the venue don't exchange any money.</div>
+            </div>
+            <div class="vp-deal-expand" onclick="dealToggle(this)" style="background:#fff;border:1px solid #D7E5EC;border-radius:10px;padding:12px 14px;">
+              <div class="vp-deal-row"><span style="font-family:'Lato',sans-serif;font-size:14px;font-weight:700;color:#191C20;">You pay a fixed amount</span><svg class="vp-deal-caret" width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="#46474A" stroke-width="2" stroke-linecap="round"/></svg></div>
+              <div class="vp-deal-explain">You pay the venue a set amount every time, no matter how many people show up.</div>
+            </div>
+            <div class="vp-deal-expand" onclick="dealToggle(this)" style="background:#fff;border:1px solid #D7E5EC;border-radius:10px;padding:12px 14px;">
+              <div class="vp-deal-row"><span style="font-family:'Lato',sans-serif;font-size:14px;font-weight:700;color:#191C20;">Attendees pay venue</span><svg class="vp-deal-caret" width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="#46474A" stroke-width="2" stroke-linecap="round"/></svg></div>
+              <div class="vp-deal-explain">Each person who comes pays the venue directly, either for food and drinks or as an entry fee.</div>
+            </div>
+            <div class="vp-deal-expand" onclick="dealToggle(this)" style="background:#fff;border:1px solid #D7E5EC;border-radius:10px;padding:12px 14px;">
+              <div class="vp-deal-row"><span style="font-family:'Lato',sans-serif;font-size:14px;font-weight:700;color:#191C20;">Venue pays you</span><svg class="vp-deal-caret" width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="#46474A" stroke-width="2" stroke-linecap="round"/></svg></div>
+              <div class="vp-deal-explain">The venue pays you for bringing people to their place.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <button class="syc-btn-primary" style="margin-top:24px;" onclick="closeReachOut()">Open WhatsApp</button>
+      <button class="syc-btn-secondary" style="margin-top:8px;" onclick="closeReachOut()">Not now</button>
+    </div>
+  </div>
+
+  <!-- ===================== All new requests sheet (dashboard) ===================== -->
+  <div id="newreqs" style="display:none;position:fixed;inset:0;z-index:1500;background:rgba(0,0,0,.4);backdrop-filter:blur(3px);align-items:flex-end;justify-content:center;" onclick="if(event.target===this)closeNewReqs()">
+    <div style="width:100%;max-width:480px;max-height:88%;overflow-y:auto;background:#FCFCFD;border-radius:24px 24px 0 0;padding:14px 16px max(20px,env(safe-area-inset-bottom));">
+      <div style="width:36px;height:4px;background:#C6C6CA;border-radius:2px;margin:0 auto 12px;"></div>
+      <div style="font-family:'Cabinet Grotesk',sans-serif;font-weight:800;font-size:19px;margin-bottom:2px;">New booking requests</div>
+      <div style="font-family:'Lato',sans-serif;font-size:12px;color:#717175;margin-bottom:14px;">3 clubs want to book The Loft by Anaya</div>
+
+      <div class="vp-bcard" style="margin-bottom:0;">
+        <div class="vp-bcard-date pending"><div class="vp-bcard-date-day">26</div><div class="vp-bcard-date-month">JUN</div></div>
+        <div class="vp-bcard-body">
+          <div class="vp-bcard-name">Tuesday Trivia Night</div>
+          <div class="vp-bcard-meta">7–9pm · 20 people · Attendees pay</div>
+          <div class="vp-bcard-meta" style="color:#7A5900;font-weight:600;margin-top:2px;">📦 Needs: Projector, Mic, Snacks</div>
+          <div class="vp-bcard-foot"><span class="vp-cal-source-tag misfits">misfits booking</span> · Karan S. · Sent 2 hours ago</div>
+        </div>
+        <span class="vp-status-pill pending">⏳ Pending</span>
+      </div>
+      <div class="vp-bcard-actions" style="margin-bottom:14px;">
+        <button class="vp-bcard-act decline" onclick="closeNewReqs();toast('Request declined')">✕ Decline</button>
+        <button class="vp-bcard-act accept" onclick="closeNewReqs();toast('Booking accepted — added to your calendar')">✓ Accept</button>
+      </div>
+
+      <div class="vp-bcard" style="margin-bottom:0;">
+        <div class="vp-bcard-date pending"><div class="vp-bcard-date-day">28</div><div class="vp-bcard-date-month">JUN</div></div>
+        <div class="vp-bcard-body">
+          <div class="vp-bcard-name">Weekend Yoga Flow
+            <span class="vp-status-pill accepted" style="margin-left:8px;font-size:10px;padding:2px 7px;vertical-align:middle;">🔁 Recurring</span>
+          </div>
+          <div class="vp-bcard-meta">8–9:30am · 15 people · You pay venue</div>
+          <div class="vp-bcard-foot"><span class="vp-cal-source-tag misfits">misfits booking</span> · Meera J. · Sent yesterday</div>
+        </div>
+        <span class="vp-status-pill pending">⏳ Pending</span>
+      </div>
+      <div class="vp-bcard-actions" style="margin-bottom:14px;">
+        <button class="vp-bcard-act decline" onclick="closeNewReqs();toast('Request declined')">✕ Decline</button>
+        <button class="vp-bcard-act accept" onclick="closeNewReqs();toast('Booking accepted — added to your calendar')">✓ Accept</button>
+      </div>
+
+      <div class="vp-bcard" style="margin-bottom:0;">
+        <div class="vp-bcard-date pending"><div class="vp-bcard-date-day">29</div><div class="vp-bcard-date-month">JUN</div></div>
+        <div class="vp-bcard-body">
+          <div class="vp-bcard-name">Indie Open Mic</div>
+          <div class="vp-bcard-meta">6–8pm · 30 people · Venue pays you</div>
+          <div class="vp-bcard-foot"><span class="vp-cal-source-tag misfits">misfits booking</span> · Dev P. · Sent yesterday</div>
+        </div>
+        <span class="vp-status-pill pending">⏳ Pending</span>
+      </div>
+      <div class="vp-bcard-actions">
+        <button class="vp-bcard-act decline" onclick="closeNewReqs();toast('Request declined')">✕ Decline</button>
+        <button class="vp-bcard-act accept" onclick="closeNewReqs();toast('Booking accepted — added to your calendar')">✓ Accept</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== FAB menu (Add event / Mark unavailable) ===================== -->
+  <div id="fabmenu" style="display:none;position:fixed;inset:0;z-index:1500;background:rgba(0,0,0,.4);backdrop-filter:blur(3px);align-items:flex-end;justify-content:center;" onclick="if(event.target===this)closeFab()">
+    <div style="width:100%;max-width:480px;background:#FCFCFD;border-radius:24px 24px 0 0;padding:14px 16px max(20px,env(safe-area-inset-bottom));">
+      <div style="width:36px;height:4px;background:#C6C6CA;border-radius:2px;margin:0 auto 12px;"></div>
+      <div class="vp-sheet-header">
+        <div class="vp-sheet-date">Add to your calendar</div>
+        <button class="vp-sheet-close" onclick="closeFab()" aria-label="Close">×</button>
+      </div>
+      <div class="vp-sheet-state">What do you want to add for The Loft by Anaya?</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;padding-bottom:8px;">
+        <button onclick="closeFab();toast('New event added to your calendar')" style="background:#FFFAEC;border:1px solid #FCE7B0;border-radius:14px;padding:18px 12px;font-family:'Lato',sans-serif;font-size:14px;font-weight:700;color:#7A5900;cursor:pointer;text-align:left;line-height:1.35;">
+          <div style="font-size:26px;margin-bottom:6px;">📅</div>Create event<div style="font-weight:400;font-size:12px;color:#A77F00;margin-top:4px;">Self-hosted event on your calendar</div>
+        </button>
+        <button onclick="closeFab();toast('Slot marked unavailable')" style="background:#FFEFEF;border:1px solid #F8C8C8;border-radius:14px;padding:18px 12px;font-family:'Lato',sans-serif;font-size:14px;font-weight:700;color:#BA1A1A;cursor:pointer;text-align:left;line-height:1.35;">
+          <div style="font-size:26px;margin-bottom:6px;">🚫</div>Mark unavailable<div style="font-weight:400;font-size:12px;color:#9C2828;margin-top:4px;">Block bookings on this slot</div>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== Share sheet ===================== -->
+  <div id="sharesheet" style="display:none;position:fixed;inset:0;z-index:1500;background:rgba(0,0,0,.4);backdrop-filter:blur(3px);align-items:flex-end;justify-content:center;" onclick="if(event.target===this)closeShare()">
+    <div style="width:100%;max-width:480px;background:#FCFCFD;border-radius:24px 24px 0 0;padding:14px 16px max(20px,env(safe-area-inset-bottom));">
+      <div style="width:36px;height:4px;background:#C6C6CA;border-radius:2px;margin:0 auto 12px;"></div>
+      <div style="font-family:'Cabinet Grotesk',sans-serif;font-weight:800;font-size:18px;">Share your venue</div>
+      <div style="font-family:'Lato',sans-serif;font-size:13px;color:#717175;margin:2px 0 14px;">Send your public page to clubs and partners.</div>
+      <div style="display:flex;align-items:center;gap:8px;background:#fff;border:1.5px solid #C6C6CA;border-radius:12px;padding:12px 14px;margin-bottom:12px;">
+        <span style="flex:1;font-family:'Lato',sans-serif;font-size:13px;color:#46474A;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">misfits.com/v/the-loft-by-anaya</span>
+        <button onclick="toast('Link copied')" style="background:#191C20;color:#fff;border:none;border-radius:99px;padding:8px 14px;font-weight:800;font-size:13px;cursor:pointer;">Copy</button>
+      </div>
+      <button class="syc-btn-primary" onclick="closeShare();toast('Opening WhatsApp share…')">Share on WhatsApp</button>
+      <button class="syc-btn-secondary" style="margin-top:8px;" onclick="closeShare()">Close</button>
+    </div>
+  </div>
+
+  <!-- ===================== Book-a-venue sheet (leader FAB destination) ===================== -->
+  <div id="bookvenue" style="display:none;position:fixed;inset:0;z-index:1500;background:rgba(0,0,0,.45);align-items:flex-end;justify-content:center;font-family:'Lato',sans-serif;" onclick="if(event.target===this)closeBookSheet()">
+    <div style="width:100%;max-width:480px;max-height:85vh;overflow-y:auto;background:#FFF;border-radius:20px 20px 0 0;padding:16px 16px max(24px,env(safe-area-inset-bottom));">
+      <div style="width:36px;height:4px;background:#E5E5E5;border-radius:2px;margin:0 auto 14px;"></div>
+      <div style="font-size:20px;font-weight:800;color:#191C20;margin-bottom:12px;">Book a venue</div>
+      <div style="display:flex;align-items:center;gap:8px;padding:10px 12px;margin-bottom:14px;background:#F4F4F5;border-radius:10px;border:1px solid #E8E8E8;">
+        <span style="font-size:14px;color:#9A9A9D;">🔍</span>
+        <input id="book-search" type="text" placeholder="Type to find a venue…" oninput="renderBookSheet(this.value)"
+          style="flex:1;border:none;outline:none;background:transparent;font-family:inherit;font-size:13px;color:#191C20;" />
+      </div>
+
+      <div id="booksheet-places">
+        <div class="ex-flabel" style="margin-top:0;">Standing bookings</div>
+        <div onclick="bookVenue('hive')" style="display:flex;align-items:center;gap:12px;padding:12px;border-radius:12px;cursor:pointer;border:1px solid #E8E8E8;margin-bottom:8px;">
+          <div style="width:44px;height:44px;border-radius:10px;flex:0 0 auto;background-image:url('assets/img/hive.jpg');background-size:cover;background-position:center;"></div>
+          <div style="flex:1;min-width:0;"><div style="font-size:14px;font-weight:800;color:#191C20;">The Hive Café</div><div style="font-size:12px;color:#717175;">Indiranagar, Bangalore · Meets every Thursday</div></div>
+          <div style="font-size:12px;font-weight:800;color:#7A5900;flex-shrink:0;">Book →</div>
+        </div>
+      </div>
+      <div id="booksheet-list"></div>
+    </div>
+  </div>
+
+  <!-- ===================== toast ===================== -->
+  <div id="toast" style="display:none;position:fixed;left:50%;bottom:120px;transform:translateX(-50%);z-index:3000;background:#191C20;color:#fff;font-family:'Lato',sans-serif;font-size:13px;font-weight:700;padding:11px 18px;border-radius:999px;box-shadow:0 8px 24px rgba(0,0,0,.25);max-width:80%;text-align:center;"></div>
+
+<script>
+  /* ---------- venue data (real fields from L3 model) ---------- */
+  const PARTNERSHIP_CARDS = {
+    FREE:        {icon:'🎁', name:'Free', desc:'Community meetups · social-cause clubs', bg:'#BFE5C0'},
+    RENT:        {icon:'💰', name:'You pay venue (rent)', desc:'Per-evening fixed rent · negotiated via request'},
+    PER_HEAD_MG: {icon:'🎟️', name:'Per-attendee · min guarantee', desc:'Each attendee pays · venue gets a minimum floor', bg:'#BFE0EE'},
+    VENUE_PAYS:  {icon:'📣', name:'Venue pays you', desc:'Venue pays for the audience you bring', bg:'#FFEFD6'},
+  };
+  const VENUES = [
+    { id:'hive', img:'hive.jpg', name:'The Hive Café', cat:'Café', city:'Bangalore', area:'Indiranagar',
+      cap:'25–50', seating:'Cosy', cover:'₹200', coverRedeem:'food & drinks', reviews:4.7, reviewCount:18,
+      about:"A warm, sunlit café with a quiet mezzanine that's perfect for small gatherings. Great coffee, easy parking, and a team that's hosted dozens of community meetups.",
+      suitable:['Birthdays','Book clubs','Small workshops','Casual meetups'],
+      partnerships:['PER_HEAD_MG','VENUE_PAYS'],
+      amenities:['☕ Café service','📶 Fast WiFi','🔌 Power points','🖥️ Projector','🅿️ Parking','❄️ AC'],
+      reviewItems:[
+        {club:'Indiranagar Book Club', activity:'Book club', rating:5, comment:"Loved the vibe — the staff helped us set up early. We'll be back.", ago:'3 days ago'},
+        {club:'Bangalore Run Club', activity:'Running', rating:5, comment:"Spacious and clean. Cover charge worked out for our group.", ago:'1 week ago'},
+        {club:'HSR Yoga Circle', activity:'Yoga', rating:4, comment:"Great for what we needed, just a bit warm without the AC on.", ago:'2 weeks ago'} ] },
+    { id:'studio', img:'studio.jpg', name:'Studio Mile', cat:'Studio', city:'Bangalore', area:'Koramangala',
+      cap:'Up to 25', seating:'Open floor', cover:'₹350 / head', coverRedeem:null, reviews:4.8, reviewCount:11,
+      about:"An airy open studio with sprung floors and full-wall mirrors — built for movement. Dance crews, yoga circles and rehearsals love this room.",
+      suitable:['Dance practice','Yoga','Rehearsals','Movement workshops'],
+      partnerships:['PER_HEAD_MG','RENT'],
+      amenities:['🪞 Mirrored wall','🔊 Sound system','🚿 Showers','📶 WiFi','❄️ AC','🧊 Water'],
+      reviewItems:[
+        {club:'Koramangala Salsa Social', activity:'Dance', rating:5, comment:"Sprung floor is a dream. We've made this our weekly home.", ago:'5 days ago'},
+        {club:'Sunrise Yoga', activity:'Yoga', rating:5, comment:"Calm, clean, great light in the mornings.", ago:'2 weeks ago'} ] },
+    { id:'terrace', img:'terrace.jpg', name:'The Terrace Co.', cat:'Outdoor', city:'Bangalore', area:'HSR Layout',
+      cap:'50–100', seating:'Mixed', cover:'Venue pays', coverRedeem:null, reviews:4.6, reviewCount:9,
+      about:"A leafy open-air terrace with string lights and skyline views. The go-to for evening socials, open mics and bigger community nights.",
+      suitable:['Open mics','Socials','Sundowners','Mixers'],
+      partnerships:['VENUE_PAYS','PER_HEAD_MG'],
+      amenities:['🌃 Skyline view','🎤 Mic & stage','🍹 In-house F&B','💡 Ambient lights','📶 WiFi','🚻 Restrooms'],
+      reviewItems:[
+        {club:'SoBo Comedy Nights', activity:'Comedy', rating:5, comment:"Hosted our open mic — sound was crisp, crowd loved it.", ago:'1 month ago'},
+        {club:'Powai Tech Talks', activity:'Workshops', rating:4, comment:"Great for our 30-person mixer. Will be back monthly.", ago:'1 month ago'} ] },
+    { id:'canvas', img:'canvas.jpg', name:'Canvas Room', cat:'Studio', city:'Bangalore', area:'Indiranagar',
+      cap:'Up to 25', seating:'Work tables', cover:'₹1,500 / session', coverRedeem:null, reviews:4.9, reviewCount:7,
+      about:"A bright, paint-friendly studio stocked for makers. Easels, big tables and a wash area in every corner — mess welcome.",
+      suitable:['Art workshops','Pottery','Craft meetups','Small shoots'],
+      partnerships:['RENT','FREE'],
+      amenities:['🖼️ Easels','🪑 Work tables','🚰 Wash area','☀️ Natural light','📶 WiFi','🅿️ Parking'],
+      reviewItems:[
+        {club:'Bangalore Art Collective', activity:'Art', rating:5, comment:"Perfect for our workshop — everything we needed was already there.", ago:'2 weeks ago'} ] },
+    { id:'court7', img:'court7.jpg', name:'Court 7', cat:'Outdoor', city:'Bangalore', area:'Whitefield',
+      cap:'25–50', seating:'Courtside', cover:'₹400 / head', coverRedeem:null, reviews:4.7, reviewCount:14,
+      about:"Indoor and outdoor courts with proper flooring and match lighting. Badminton groups, pickleball crews and fitness meetups book here all week.",
+      suitable:['Badminton','Pickleball','Fitness meetups','Friendly tournaments'],
+      partnerships:['PER_HEAD_MG','RENT'],
+      amenities:['🏟️ Pro courts','💡 Match lighting','🥤 Hydration','🚿 Changing rooms','🅿️ Parking','📶 WiFi'],
+      reviewItems:[
+        {club:'Whitefield Smashers', activity:'Badminton', rating:5, comment:"Courts are pro-level and the lights are great for evening games.", ago:'4 days ago'} ] },
+    { id:'brew', img:'brew.jpg', name:'Brew & Board', cat:'Café', city:'Bangalore', area:'Koramangala',
+      cap:'25–50', seating:'Group tables', cover:'₹1,800 / session', coverRedeem:'food & drinks', reviews:4.8, reviewCount:12,
+      about:"A cosy board-game café with 200+ games on the shelf. Trivia nights, game clubs and casual hangs feel right at home.",
+      suitable:['Game nights','Trivia','Hobby clubs','Casual socials'],
+      partnerships:['PER_HEAD_MG','VENUE_PAYS'],
+      amenities:['🎲 200+ games','🍕 Café menu','🔊 Trivia setup','📶 WiFi','❄️ AC','🪑 Group tables'],
+      reviewItems:[
+        {club:'Koramangala Board Games', activity:'Board games', rating:5, comment:"200+ games and a host on request. Our club never leaves.", ago:'1 week ago'} ] },
+  ];
+  const byId = (id) => VENUES.find(v => v.id === id) || VENUES[0];
+
+  /* ---------- navigation (reuses real .screen-host.active) ---------- */
+  let stack = ['decision'];
+  function show(name){
+    document.querySelectorAll('.screen-host').forEach(s => s.classList.remove('active'));
+    const el = document.querySelector(`.screen-host[data-screen="${name}"]`);
+    if(el){ el.classList.add('active'); el.scrollTop = 0; const inner = el.querySelector('.vf-scroll'); if(inner) inner.scrollTop=0; }
+  }
+  function go(name, venueId){
+    if(name === 'venue-detail') renderVenue(venueId || 'hive');
+    if(name === 'partner-form') showFormStep(1);
+    if(name === 'decision'){ stack = ['decision']; }
+    else if(stack[stack.length-1] !== name){ stack.push(name); }
+    show(name);
+  }
+
+  /* ---------- listing wizard ---------- */
+  let formStep = 1;
+  function showFormStep(n){
+    formStep = n;
+    document.querySelectorAll('.vl-step').forEach(s => s.style.display = (Number(s.dataset.vlstep) === n) ? 'block' : 'none');
+    document.getElementById('vl-progress').style.width = (n/6*100) + '%';
+    document.getElementById('vl-next').style.display = n < 6 ? 'flex' : 'none';
+    document.getElementById('vl-submit').style.display = n < 6 ? 'none' : 'block';
+    const body = document.querySelector('.screen-host[data-screen="partner-form"] .q-body');
+    if(body) body.scrollTop = 0;
+  }
+  function formNext(){ if(formStep < 6) showFormStep(formStep + 1); }
+  function formBack(){ if(formStep > 1) showFormStep(formStep - 1); else back(); }
+
+  /* ---------- chip helpers ---------- */
+  function chip(el){ el.classList.toggle('selected'); }
+  function radioChip(el){
+    const cls = (el.classList.contains('vp-day-chip') || el.classList.contains('vp-toggle-pill')) ? 'active' : 'selected';
+    [...el.parentNode.children].forEach(c => c.classList.remove(cls));
+    el.classList.add(cls);
+  }
+  function exChip(el){ el.classList.toggle('on'); }
+  function toggleMore(){
+    const m = document.getElementById('more-filters');
+    const open = m.style.display === 'block';
+    m.style.display = open ? 'none' : 'block';
+    document.querySelector('.moref').textContent = open ? '+ More filters' : '− Less';
+  }
+  function toggleDD(id){
+    const dd = document.getElementById(id);
+    const open = dd.style.display === 'block';
+    document.querySelectorAll('.ex-dd').forEach(d => d.style.display = 'none');
+    dd.style.display = open ? 'none' : 'block';
+  }
+  function pickDD(id, valueElId, val){
+    document.getElementById(valueElId).firstChild.textContent = val;
+    document.getElementById(id).style.display = 'none';
+  }
+  function back(){
+    if(stack.length > 1) stack.pop();
+    show(stack[stack.length-1]);
+  }
+
+  /* ---------- explore list (VenueCardSYC) ---------- */
+  function renderList(q){
+    const list = document.getElementById('vlist');
+    const term = (q || '').trim().toLowerCase();
+    const shown = VENUES.filter(v => !term || v.name.toLowerCase().includes(term) || v.area.toLowerCase().includes(term) || v.cat.toLowerCase().includes(term));
+    if(shown.length === 0){ list.innerHTML = `<div style="padding:32px 16px;text-align:center;color:#717175;"><div style="font-size:36px;margin-bottom:8px;">🔍</div><div style="font-size:14px;font-weight:800;color:#191C20;margin-bottom:4px;">No venues match these filters</div><div style="font-size:12px;">Try clearing some filters or switching city.</div></div>`; return; }
+    list.innerHTML = shown.map(v => `
+      <div class="vp-venue-card" role="button" onclick="go('venue-detail','${v.id}')">
+        <div class="vp-venue-cover">
+          <img src="assets/img/${v.img}" alt="" />
+          <div style="position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,0) 55%,rgba(0,0,0,0.32) 100%);"></div>
+          <div class="l3-newbadge">✨ New</div>
+          <div style="position:absolute;bottom:12px;left:12px;display:flex;gap:6px;">
+            <div class="vp-venue-cover-tag">${v.cat}</div>
+          </div>
+        </div>
+        <div class="vp-venue-info">
+          <div class="vp-venue-name">${v.name}</div>
+          <div style="font-family:'Lato',sans-serif;font-size:12px;color:#717175;margin-top:4px;">📍 ${v.area}, ${v.city}</div>
+          <div style="font-family:'Lato',sans-serif;font-size:12px;color:#717175;margin-top:2px;">👥 ${v.cap}</div>
+        </div>
+      </div>`).join('');
+  }
+
+  /* ---------- venue detail (L3) ---------- */
+  let currentVenueId = 'hive';
+  function renderVenue(id){
+    const v = byId(id);
+    currentVenueId = v.id;
+    const stars = '★'.repeat(Math.round(v.reviews));
+    const partnerCards = v.partnerships.map(k => {
+      const c = PARTNERSHIP_CARDS[k]; if(!c) return '';
+      return `<div class="vp-offering-card">
+        <div class="vp-offering-icon"${c.bg?` style="background:${c.bg}"`:''}>${c.icon}</div>
+        <div class="vp-offering-text"><div class="vp-offering-name">${c.name}</div><div class="vp-offering-desc">${c.desc}</div></div>
+      </div>`;
+    }).join('');
+    const reviews = v.reviewItems.map(r => `
+      <div style="padding:12px 14px;border-radius:12px;background:#FFFFFF;border:1px solid #E0E0E2;font-family:'Lato',sans-serif;">
+        <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:4px;">
+          <div style="font-size:14px;font-weight:700;color:#191C20;">${r.club}<span style="font-weight:500;color:#717175;margin-left:6px;">· ${r.activity}</span></div>
+          <div style="display:inline-flex;align-items:center;gap:2px;font-size:12px;font-weight:700;color:#7A5900;"><span style="color:#FABB22;">★</span>${r.rating}</div>
+        </div>
+        <div style="font-size:13px;color:#46474A;line-height:1.45;">${r.comment}</div>
+        <div style="font-size:11px;color:#A7A7AA;margin-top:6px;">${r.ago}</div>
+      </div>`).join('');
+
+    document.getElementById('l3-body').innerHTML = `
+      <img class="l3-hero" src="assets/img/${v.img}" alt="${v.name}" />
+      <div class="vp-identity">
+        <div class="vp-identity-name">${v.name}</div>
+        <div class="vp-identity-meta">
+          <span class="vp-pill">${v.cat}</span>
+          <span class="vp-identity-area">📍 ${v.city} · ${v.area}</span>
+        </div>
+        <div style="margin-top:8px;display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:999px;background:#FFFAEC;font-family:'Lato',sans-serif;font-size:13px;font-weight:700;color:#7A5900;">
+          <span style="color:#FABB22;font-size:14px;">★</span>${v.reviews.toFixed(1)}
+          <span style="color:#A77F00;font-weight:500;">· ${v.reviewCount} reviews</span>
+        </div>
+      </div>
+
+      <div class="vp-stats" style="grid-template-columns:repeat(3,1fr);">
+        <div class="vp-stat-card"><div class="vp-stat-icon blue">👥</div><div class="vp-stat-label">Capacity</div><div class="vp-stat-value" style="font-size:13px;">${v.cap}</div></div>
+        <div class="vp-stat-card"><div class="vp-stat-icon green">🪑</div><div class="vp-stat-label">Seating</div><div class="vp-stat-value" style="font-size:13px;">${v.seating}</div></div>
+        <div class="vp-stat-card"><div class="vp-stat-icon">💸</div><div class="vp-stat-label">Cover</div><div class="vp-stat-value" style="font-size:13px;">${v.cover}</div>${v.coverRedeem?`<div style="font-family:'Lato',sans-serif;font-size:10px;color:#7A5900;margin-top:2px;line-height:1.3;text-align:center;">redeem for ${v.coverRedeem}</div>`:''}</div>
+      </div>
+
+      <div class="vp-section"><div class="vp-section-title">About this venue</div><div class="vp-section-body">${v.about}</div></div>
+
+      <div class="vp-section"><div class="vp-section-title">Suitable for</div>
+        <div class="vp-amenities-grid">${v.suitable.map(s=>`<div class="vp-amenity-chip">${s}</div>`).join('')}</div></div>
+
+      <div class="vp-section"><div class="vp-section-title">Partnerships this venue accepts</div>
+        <div class="vp-offerings">${partnerCards}</div></div>
+
+      <div class="vp-section"><div class="vp-section-title">Amenities</div>
+        <div class="vp-amenities-grid">${v.amenities.map(a=>`<div class="vp-amenity-chip">${a}</div>`).join('')}</div></div>
+
+      <div class="vp-section"><div class="vp-section-title">What clubs say</div>
+        <div style="display:flex;flex-direction:column;gap:10px;margin-top:8px;">${reviews}</div></div>
+
+      <div class="vp-section"><div class="vp-section-title">Location</div>
+        <div onclick="toast('Opening Google Maps…')" style="display:block;position:relative;height:200px;overflow:hidden;border-radius:14px;cursor:pointer;background:linear-gradient(135deg,#F4F1EA 0%,#ECE7DA 100%);background-image:repeating-linear-gradient(0deg,transparent 0 38px,rgba(0,0,0,0.05) 38px 39px),repeating-linear-gradient(90deg,transparent 0 38px,rgba(0,0,0,0.05) 38px 39px),linear-gradient(105deg,transparent 0 45%,rgba(255,255,255,0.65) 45% 52%,transparent 52% 100%),linear-gradient(135deg,#F4F1EA 0%,#ECE7DA 100%);">
+          <div style="position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);display:flex;flex-direction:column;align-items:center;gap:12px;pointer-events:none;">
+            <svg width="38" height="38" viewBox="0 0 24 24" fill="none"><path d="M12 0C6.13 0 1 5.13 1 12c0 8.25 11 18 11 18s11-9.75 11-18C23 5.13 17.87 0 12 0z" fill="#E53935" stroke="#fff" stroke-width="1.5"/><circle cx="12" cy="11" r="3.5" fill="#fff"/></svg>
+            <span style="background:#FFFFFF;color:#1F6080;font-family:'Lato',sans-serif;font-weight:700;font-size:14px;padding:8px 16px;border-radius:999px;box-shadow:0 2px 8px rgba(0,0,0,0.12);">Open in Google Maps</span>
+          </div>
+        </div></div>
+      <div style="height:16px;"></div>`;
+  }
+
+  /* ---------- dashboard calendar + bookings drawer (real V1Bookings behaviour) ---------- */
+  const BOOK_RECURRING = { cls:'recurring', name:'Indiranagar Book Club', cadence:'recurring',
+    meta:'6–9pm · 14 people · They sponsor', who:'Aisha R.' };
+  const BOOK_ONETIME = { cls:'confirmed', name:'Sunset Sketch Circle', cadence:'one-time',
+    meta:'5–7pm · 12 people · Per-attendee', who:'Rohan M.' };
+  // Two months: June (today=25, recurring Saturdays + a one-time, one off-day)
+  // and July (nothing booked yet) so the ‹ › nav is real.
+  const MONTHS = {
+    6: { label:'June 2026', short:'JUN', days:30, lead:0, today:25,
+         bookings:{ 7:[BOOK_RECURRING], 14:[BOOK_RECURRING], 21:[BOOK_RECURRING], 28:[BOOK_RECURRING], 25:[BOOK_RECURRING, BOOK_ONETIME] },
+         blocked:{ 16:true } },
+    7: { label:'July 2026', short:'JUL', days:31, lead:2, today:null, bookings:{}, blocked:{} },
+  };
+  let viewMonth = 6;
+  let selectedDay = 25;
+
+  function renderCal(){
+    const m = MONTHS[viewMonth];
+    document.getElementById('cal-month').textContent = m.label;
+    // ‹ disabled at the current month (can't browse the past), › always on
+    const prev = document.getElementById('cal-prev');
+    prev.style.opacity = viewMonth > 6 ? '1' : '.35';
+    prev.style.pointerEvents = viewMonth > 6 ? 'auto' : 'none';
+    const grid = document.getElementById('cal-grid');
+    const dows = ['M','T','W','T','F','S','S'];
+    let html = dows.map(d=>`<div class="vp-cal-dow">${d}</div>`).join('');
+    for(let i=0;i<m.lead;i++) html += `<div class="vp-cal-day other"></div>`;
+    for(let d=1; d<=m.days; d++){
+      const cls = ['vp-cal-day'];
+      const count = m.bookings[d] ? m.bookings[d].length : 0;
+      if(m.blocked[d]) cls.push('blocked');
+      else if(d===m.today) cls.push('today');
+      else if(count) cls.push('booked');
+      if(d===selectedDay) cls.push('selected');
+      const badge = count ? `<span class="vp-cal-badge">${count}</span>` : '';
+      html += `<div class="${cls.join(' ')}" onclick="selectDay(${d})">${d}${badge}</div>`;
+    }
+    let cells = m.lead + m.days;
+    let trail = 1;
+    while(cells % 7 !== 0){ html += `<div class="vp-cal-day other">${trail++}</div>`; cells++; }
+    grid.innerHTML = html;
+    renderDrawer(selectedDay);
+  }
+
+  function goMonth(dir){
+    const next = viewMonth + dir;
+    if(next < 6 || next > 7) return;
+    viewMonth = next;
+    const m = MONTHS[viewMonth];
+    selectedDay = m.today || 1;
+    renderCal();
+  }
+
+  function bcardHTML(b){
+    const m = MONTHS[viewMonth];
+    const cadencePill = b.cadence === 'recurring'
+      ? `<span class="vp-status-pill accepted" style="margin-left:8px;font-size:10px;padding:2px 7px;vertical-align:middle;">🔁 Recurring</span>`
+      : `<span class="vp-status-pill" style="margin-left:8px;font-size:10px;padding:2px 7px;vertical-align:middle;background:#E8F4F9;color:#1F6080;border:1px solid #C5E3F1;">📅 One-time</span>`;
+    return `<div class="vp-bcard">
+      <div class="vp-bcard-date ${b.cls}"><div class="vp-bcard-date-day">${selectedDay}</div><div class="vp-bcard-date-month">${m.short}</div></div>
+      <div class="vp-bcard-body">
+        <div class="vp-bcard-name">${b.name}${cadencePill}</div>
+        <div class="vp-bcard-meta">${b.meta}</div>
+        <div class="vp-bcard-foot"><span class="vp-cal-source-tag misfits">misfits booking</span> · ${b.who}</div>
+      </div>
+      <span class="vp-status-pill accepted">✓ Confirmed</span>
+    </div>
+    <div onclick="toast('Opening booking…')" style="margin:-4px 14px 12px;font-family:'Lato',sans-serif;font-size:12px;color:#717175;cursor:pointer;text-align:right;">Tap for details ›</div>`;
+  }
+
+  function renderDrawer(day){
+    selectedDay = day;
+    const m = MONTHS[viewMonth];
+    const drawer = document.getElementById('dash-drawer');
+    const isToday = day === m.today;
+    const dateLabel = isToday ? 'Today' : `${day} ${m.short[0]}${m.short.slice(1).toLowerCase()}`;
+    if(m.blocked[day]){
+      drawer.innerHTML = `
+        <div class="vp-bsec-master"><div class="vp-bsec-master-title">Bookings · ${dateLabel}</div><div class="vp-bsec-master-sub">🚫 Unavailable</div></div>
+        <div class="vp-empty-day"><strong>🚫 You marked this date unavailable</strong>
+          <button class="vp-empty-action mark-available" onclick="markAvail(${day})">Mark available</button></div>`;
+      return;
+    }
+    const items = m.bookings[day] || [];
+    const sub = items.length ? `${items.length} booking${items.length>1?'s':''}` : 'No bookings';
+    let body = `<div class="vp-bsec-sub-header"><div class="vp-bsec-sub-label">Upcoming</div><div class="vp-bsec-sub-count${items.length?'':' zero'}">${items.length}</div></div>`;
+    if(items.length){ body += items.map(bcardHTML).join(''); }
+    else {
+      body += `<div class="vp-bsec-sub-empty">Nothing confirmed for this date</div>
+        <div style="padding:12px 14px 24px;text-align:center;"><button class="vp-empty-action" onclick="markUnavail(${day})">🚫 Mark unavailable</button></div>`;
+    }
+    drawer.innerHTML = `<div class="vp-bsec-master"><div class="vp-bsec-master-title">Bookings · ${dateLabel}</div><div class="vp-bsec-master-sub">${sub}</div></div>${body}`;
+  }
+
+  function selectDay(day){
+    selectedDay = day;
+    const m = MONTHS[viewMonth];
+    document.querySelectorAll('#cal-grid .vp-cal-day').forEach(c => c.classList.remove('selected'));
+    const cells = [...document.querySelectorAll('#cal-grid .vp-cal-day:not(.other)')];
+    const cell = cells[day-1];
+    if(cell) cell.classList.add('selected');
+    renderDrawer(day);
+    const drawer = document.getElementById('v1-bookings-drawer');
+    const scroller = drawer && drawer.closest('.vf-scroll');
+    if(scroller){
+      const top = drawer.offsetTop - scroller.clientHeight * 0.40;
+      scroller.scrollTo({ top: Math.max(0, top), behavior:'smooth' });
+    }
+  }
+
+  function markUnavail(day){ MONTHS[viewMonth].blocked[day] = true; renderCal(); selectDay(day); toast('Marked unavailable'); }
+  function markAvail(day){ delete MONTHS[viewMonth].blocked[day]; renderCal(); selectDay(day); toast('Marked available'); }
+
+  /* ---------- explore-clubs grid (real V1Clubs) ---------- */
+  const EXPLORE_CLUBS = [
+    { name:'Bangalore Run Club',   activity:'Running',  emoji:'🏃', leader:'Rohan', photo:'club-run.jpg', rating:4.8, meetups:12, isNew:false },
+    { name:'SoBo Comedy Nights',   activity:'Comedy',   emoji:'🎤', leader:'Karan', alt:'alt2', rating:4.6, meetups:9, isNew:false },
+    { name:'Sunrise Yoga',         activity:'Yoga',     emoji:'🧘', leader:'Meera', alt:'alt3', isNew:true },
+    { name:'Indiranagar Film Society', activity:'Film', emoji:'🎬', leader:'Dev', alt:'alt4', rating:4.7, meetups:6, isNew:false },
+  ];
+  function clubCardHTML(c){
+    const cover = c.photo
+      ? `<img src="assets/img/${c.photo}" alt="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;" /><div style="position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,0) 40%,rgba(0,0,0,0.35) 100%);"></div>`
+      : '';
+    const newBadge = c.isNew
+      ? `<div style="position:absolute;top:10px;right:10px;background:rgba(255,255,255,0.92);color:#7A5900;padding:3px 9px;border-radius:99px;font-size:11px;font-weight:800;border:1px solid #FCE7B0;">🆕 New</div>` : '';
+    const rating = c.isNew
+      ? `<span class="vp-venue-rating" style="color:#7A5900;">Just started</span>`
+      : `<span class="vp-venue-rating">★ ${c.rating} · ${c.meetups}</span>`;
+    return `<div class="vp-venue-card" onclick="toast('Opening ${c.name}…')">
+      <div class="vp-venue-cover ${c.photo?'':(c.alt||'')}" style="position:relative;overflow:hidden;">
+        ${cover}
+        <div style="position:absolute;bottom:12px;left:12px;width:44px;height:44px;border-radius:50%;background:#FFF;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 6px rgba(0,0,0,0.18);font-size:22px;">${c.emoji}</div>
+        <div class="vp-venue-cover-tag" style="position:absolute;bottom:12px;left:64px;">${c.emoji} ${c.activity}</div>
+        ${newBadge}
+      </div>
+      <div class="vp-venue-info">
+        <div class="vp-venue-name">${c.name}</div>
+        <div class="vp-venue-meta"><span class="vp-venue-meta-item">Led by ${c.leader}</span>${rating}</div>
+      </div>
+    </div>`;
+  }
+  function renderClubs(filter){
+    const grid = document.getElementById('clubs-grid');
+    const shown = (!filter || filter==='All activities') ? EXPLORE_CLUBS : EXPLORE_CLUBS.filter(c => c.activity === filter.replace(/^[^ ]+ /,''));
+    grid.innerHTML = shown.length ? shown.map(clubCardHTML).join('')
+      : `<div style="padding:24px;text-align:center;color:#717175;font-size:13px;">No clubs in this activity yet.</div>`;
+  }
+  function clubFilter(el){
+    [...el.parentNode.children].forEach(c => c.classList.remove('active'));
+    el.classList.add('active');
+    renderClubs(el.textContent.trim());
+  }
+  function scrollToExplore(){
+    const anchor = document.getElementById('explore-section-anchor');
+    const scroller = document.querySelector('.screen-host[data-screen="venue-owner"] .vf-scroll');
+    if(anchor && scroller){ scroller.scrollTo({ top: Math.max(0, anchor.offsetTop - 8), behavior:'smooth' }); }
+  }
+
+  /* ---------- modals + sheets ---------- */
+  function openReachOut(){ document.getElementById('reachout').style.display='flex'; }
+  function closeReachOut(){ document.getElementById('reachout').style.display='none'; }
+  function dealToggle(el){ el.classList.toggle('expanded'); }
+  function openNewReqs(){ document.getElementById('newreqs').style.display='flex'; }
+  function closeNewReqs(){ document.getElementById('newreqs').style.display='none'; }
+  function openFab(){ document.getElementById('fabmenu').style.display='flex'; }
+  function closeFab(){ document.getElementById('fabmenu').style.display='none'; }
+  function openShare(){ document.getElementById('sharesheet').style.display='flex'; }
+  function closeShare(){ document.getElementById('sharesheet').style.display='none'; }
+  function openBookSheet(){ renderBookSheet(''); document.getElementById('bookvenue').style.display='flex'; }
+  function closeBookSheet(){ document.getElementById('bookvenue').style.display='none'; }
+  function renderBookSheet(q){
+    const term = (q||'').trim().toLowerCase();
+    const list = document.getElementById('booksheet-list');
+    const places = document.getElementById('booksheet-places');
+    // Real behaviour: global venue search only kicks in once you type (≥2 chars).
+    // Until then, only the leader's own places show.
+    if(term.length < 2){
+      if(places) places.style.display = 'block';
+      list.innerHTML = `<div style="padding:18px 8px 4px;text-align:center;color:#9a979f;font-size:12.5px;">🔍 Search any venue on Misfits to book it.</div>`;
+      return;
+    }
+    if(places) places.style.display = 'none';
+    const shown = VENUES.filter(v => v.name.toLowerCase().includes(term) || v.area.toLowerCase().includes(term) || v.cat.toLowerCase().includes(term));
+    list.innerHTML = (shown.length
+      ? `<div class="ex-flabel" style="margin-top:0;">Other venues on Misfits</div>` + shown.map(v => `
+        <div onclick="bookVenue('${v.id}')" style="display:flex;align-items:center;gap:12px;padding:12px;border-radius:12px;cursor:pointer;border:1px solid #E8E8E8;margin-bottom:8px;">
+          <div style="width:44px;height:44px;border-radius:10px;flex:0 0 auto;background-image:url('assets/img/${v.img}');background-size:cover;background-position:center;"></div>
+          <div style="flex:1;min-width:0;"><div style="font-size:14px;font-weight:800;color:#191C20;">${v.name}</div><div style="font-size:12px;color:#717175;">${v.area}, ${v.city}</div></div>
+          <div style="font-size:12px;font-weight:800;color:#7A5900;flex-shrink:0;">Book →</div>
+        </div>`).join('')
+      : `<div style="padding:20px 8px;text-align:center;color:#717175;font-size:13px;">No venue called "${q}" yet.<br/><span style="color:#7A5900;font-weight:800;">+ Add it yourself</span></div>`);
+  }
+  function bookVenue(id){
+    const v = byId(id);
+    document.getElementById('raise-vname').textContent = v.name;
+    document.getElementById('raise-vmeta').innerHTML = '📍 ' + v.area + ', ' + v.city;
+    document.getElementById('raise-vthumb').style.backgroundImage = `url('assets/img/${v.img}')`;
+    closeBookSheet();
+    go('venue-flow-raise');
+  }
+
+  let toastTimer;
+  function toast(msg){
+    const t = document.getElementById('toast');
+    t.innerHTML = msg; t.style.display='block';
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(()=>{ t.style.display='none'; }, 1900);
+  }
+
+  /* ---------- leader home tabs (Bookings / Explore) ---------- */
+  function leaderTab(tab){
+    document.getElementById('ltab-bookings').style.display = tab==='bookings' ? 'block' : 'none';
+    document.getElementById('ltab-explore').style.display  = tab==='explore'  ? 'block' : 'none';
+    document.getElementById('lnav-bookings').classList.toggle('active', tab==='bookings');
+    document.getElementById('lnav-explore').classList.toggle('active', tab==='explore');
+    const sc = document.getElementById('leader-scroll'); if(sc) sc.scrollTop = 0;
+  }
+  function openLeaderHome(tab){ go('leader-home'); leaderTab(tab || 'bookings'); }
+
+  /* ---------- dashboard tabs (Bookings / Explore clubs) ---------- */
+  function switchTab(tab){
+    document.getElementById('tab-bookings').style.display = tab==='bookings' ? 'block' : 'none';
+    document.getElementById('tab-clubs').style.display    = tab==='clubs'    ? 'block' : 'none';
+    document.getElementById('nav-bookings').classList.toggle('active', tab==='bookings');
+    document.getElementById('nav-clubs').classList.toggle('active', tab==='clubs');
+    const sc = document.querySelector('.screen-host[data-screen="venue-owner"] .vf-scroll');
+    if(sc) sc.scrollTop = 0;
+  }
+
+  /* expose for the framing page */
+  window.go = go; window.back = back;
+
+  renderList();
+  renderCal();
+  renderClubs('');
+</script>
+
+<style>
+  .ex-chip{ flex-shrink:0;padding:7px 12px;border-radius:99px;border:1.5px solid #E5E5E5;background:#FFF;
+    font-family:'Lato',sans-serif;font-size:12px;font-weight:700;color:#46474A;cursor:pointer;white-space:nowrap; }
+  .ex-chip.on{ border-color:#FABB22;background:#FFFAEC;color:#191C20;font-weight:800; }
+  .ex-dd{ display:none;position:absolute;top:100%;left:0;right:0;margin-top:4px;background:#fff;border:1.5px solid #C6C6CA;
+    border-radius:12px;box-shadow:0 8px 24px rgba(0,0,0,.1);z-index:30;overflow:hidden; }
+  .ex-dd-item{ padding:11px 14px;font-family:'Lato',sans-serif;font-size:14px;font-weight:600;color:#191C20;cursor:pointer; }
+  .ex-dd-item:hover{ background:#FFFAEC; }
+  .ex-flabel{ font-size:11px;font-weight:800;color:#717175;text-transform:uppercase;letter-spacing:.5px;margin:12px 0 6px; }
+  .rz-select{ display:flex;align-items:center;justify-content:space-between;background:#fff;border:1.5px solid #C6C6CA;
+    border-radius:12px;padding:13px 15px;font-family:'Lato',sans-serif;font-size:14px;font-weight:700;color:#191C20;cursor:pointer; }
+  /* partnership + POC selection cards (real inline styling) */
+  .vl-deal,.vl-poc{ text-align:left;padding:14px 16px;border-radius:12px;border:2px solid #E0E0E2;background:#fff;
+    font-family:'Lato',sans-serif;cursor:pointer;width:100%; }
+  .vl-deal.selected,.vl-poc.selected{ border-color:#FABB22;background:#FFF8E6; }
+  .vl-deal .t,.vl-poc .t{ font-size:15px;font-weight:700;color:#191C20;margin-bottom:2px; }
+  .vl-deal .s,.vl-poc .s{ font-size:13px;color:#717175;line-height:1.4; }
+</style>
+</body>
+</html>
