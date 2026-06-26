@@ -1394,11 +1394,11 @@ You'll get notified when they respond.</p>
   const EXPLORE_CLUBS = [
     { id:'run', name:'Bangalore Run Club', activity:'Running', emoji:'🏃', leader:'Rohan', photo:'club-run.jpg', rating:4.8, meetups:12, isNew:false,
       members:'30+', freq:'Weekly', turnout:'28', founded:'Nov 2025', area:'Whitefield', about:"An early-morning running crew that loves a post-run social. Routes around the lake, then coffee and conversation.", recent:[{date:'Sat 21 Jun',venue:'Cubbon Park',meta:'28 attended · ★ 5'},{date:'Sat 14 Jun',venue:'Lalbagh',meta:'25 attended · ★ 5'}] },
-    { id:'comedy', name:'SoBo Comedy Nights', activity:'Comedy', emoji:'🎤', leader:'Karan', alt:'alt2', rating:4.6, meetups:9, isNew:false,
+    { id:'comedy', name:'SoBo Comedy Nights', activity:'Comedy', emoji:'🎤', leader:'Karan', photo:'club-comedy.jpg', rating:4.6, meetups:9, isNew:false,
       members:'40+', freq:'Fortnightly', turnout:'35', founded:'Aug 2025', area:'Koramangala', about:"Open-mic comedy nights for new and seasoned comics. A warm room, a mic, and a crowd that's here for the laughs.", recent:[{date:'Fri 20 Jun',venue:'The Humming Tree',meta:'35 attended · ★ 5'},{date:'Fri 6 Jun',venue:'That Comedy Club',meta:'30 attended · ★ 4'}] },
-    { id:'yoga', name:'Sunrise Yoga', activity:'Yoga', emoji:'🧘', leader:'Meera', alt:'alt3', isNew:true,
+    { id:'yoga', name:'Sunrise Yoga', activity:'Yoga', emoji:'🧘', leader:'Meera', photo:'club-yoga.jpg', isNew:true,
       members:'15', freq:'—', turnout:'—', founded:'Jun 2026', area:'HSR Layout', about:"A gentle morning yoga circle just getting started — all levels welcome.", recent:[] },
-    { id:'film', name:'Indiranagar Film Society', activity:'Film', emoji:'🎬', leader:'Dev', alt:'alt4', rating:4.7, meetups:6, isNew:false,
+    { id:'film', name:'Indiranagar Film Society', activity:'Film', emoji:'🎬', leader:'Dev', photo:'club-film.jpg', rating:4.7, meetups:6, isNew:false,
       members:'25', freq:'Monthly', turnout:'22', founded:'Feb 2026', area:'Indiranagar', about:"A monthly film club screening indie and world cinema, followed by a lively discussion over chai.", recent:[{date:'Sun 15 Jun',venue:'Canvas Room',meta:'22 attended · ★ 5'}] },
   ];
   const MY_CLUBS = [
@@ -1418,7 +1418,7 @@ You'll get notified when they respond.</p>
     return `<div class="vp-venue-card" onclick="openClub('${c.id}')">
       <div class="vp-venue-cover ${c.photo?'':(c.alt||'')}" style="position:relative;overflow:hidden;">
         ${cover}
-        <div style="position:absolute;bottom:12px;left:12px;width:44px;height:44px;border-radius:50%;background:#FFF;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 6px rgba(0,0,0,0.18);font-size:22px;">${c.emoji}</div>
+        <div style="position:absolute;bottom:12px;left:12px;width:44px;height:44px;border-radius:50%;background:#FFF center/cover ${c.photo?`url('assets/img/${c.photo}')`:''};display:flex;align-items:center;justify-content:center;box-shadow:0 2px 6px rgba(0,0,0,0.18);font-size:22px;overflow:hidden;">${c.photo?'':c.emoji}</div>
         <div class="vp-venue-cover-tag" style="position:absolute;bottom:12px;left:64px;">${c.emoji} ${c.activity}</div>
         ${newBadge}
       </div>
@@ -1462,7 +1462,8 @@ You'll get notified when they respond.</p>
       : `<div style="font-family:'Lato',sans-serif;font-size:13px;color:#717175;padding:4px 0;">No past meetups yet — this club is just getting started.</div>`;
     document.getElementById('cd-body').innerHTML = `
       <div class="vp-detail-cover" style="${coverBg}position:relative;display:flex;align-items:center;justify-content:center;">
-        <div style="width:96px;height:96px;border-radius:50%;background:#FFF;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 16px rgba(0,0,0,0.12);font-size:42px;">${c.emoji}</div>
+        <div style="position:absolute;inset:0;background:rgba(0,0,0,0.18);"></div>
+        <div style="position:relative;width:96px;height:96px;border-radius:50%;background:#FFF center/cover ${c.photo?`url('assets/img/${c.photo}')`:''};display:flex;align-items:center;justify-content:center;box-shadow:0 4px 16px rgba(0,0,0,0.18);font-size:42px;overflow:hidden;border:3px solid #fff;">${c.photo?'':c.emoji}</div>
       </div>
       <div class="vp-identity">
         <div class="vp-identity-name">${c.name}</div>
