@@ -636,11 +636,13 @@ You'll get notified when they respond.</p>
           <div style="padding-bottom:100px;">
 
            <div id="tab-bookings">
-            <!-- urgent pill -->
-            <div class="vp-urgent-pill" onclick="openNewReqs()">
-              <div class="vp-urgent-pill-icon">3</div>
-              <div class="vp-urgent-pill-body"><div class="vp-urgent-pill-title">3 new booking requests</div></div>
-              <div class="vp-urgent-pill-arrow">→</div>
+            <!-- urgent pill — pinned (does not scroll with the calendar/drawer) -->
+            <div style="position:sticky;top:0;z-index:8;background:#FAF9F7;padding:2px 0 8px;">
+              <div class="vp-urgent-pill" onclick="openNewReqs()">
+                <div class="vp-urgent-pill-icon">3</div>
+                <div class="vp-urgent-pill-body"><div class="vp-urgent-pill-title">3 new booking requests</div></div>
+                <div class="vp-urgent-pill-arrow">→</div>
+              </div>
             </div>
 
             <!-- calendar -->
