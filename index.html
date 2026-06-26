@@ -54,23 +54,36 @@
   .reset:hover{ background:rgba(0,0,0,.1); }
   .hint{ font-size:12.5px; color:#7a7770; }
 
-  /* ---- Phone: keep the iPhone frame but scale it to fit the screen so it
-         doesn't overflow; the app scrolls inside it. ---- */
+  /* ---- Phone: keep the iPhone frame at its fixed size and scale the whole
+         unit (via JS transform) to fit the screen — the app renders at the
+         exact desktop width so nothing reflows or distorts. ---- */
   @media (max-width: 600px) {
+    html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
     html, body { height: 100%; overflow: hidden; }
     body { padding: 0; min-height: 100dvh; }
     .brandline, .controls { display: none; }
     .stage { gap: 0; height: 100dvh; justify-content: center; }
-    .device {
-      aspect-ratio: 402 / 872;
-      height: min(99dvh, calc(99vw * 872 / 402));
-      width: auto;
-      padding: 11px;
-      border-radius: 54px;
-    }
+    .device { transform-origin: center center; }
     .device::before, .device::after { display: none; }
   }
 </style>
+<script>
+  /* Scale the fixed 402x872 frame to fit the phone viewport. */
+  (function () {
+    function fit() {
+      var d = document.querySelector('.device');
+      if (!d) return;
+      if (window.innerWidth > 600) { d.style.transform = ''; return; }
+      var s = Math.min(window.innerWidth / 402, window.innerHeight / 872) * 0.97;
+      d.style.transform = 'scale(' + s + ')';
+    }
+    ['DOMContentLoaded', 'load', 'resize', 'orientationchange'].forEach(function (ev) {
+      window.addEventListener(ev, fit);
+    });
+    // also after fonts/layout settle
+    setTimeout(fit, 50); setTimeout(fit, 400);
+  })();
+</script>
 </head>
 <body>
   <div class="stage">
