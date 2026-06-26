@@ -247,8 +247,8 @@
         </div>
       </div>
 
-      <!-- FAB + Book -->
-      <button onclick="openBookSheet()" aria-label="Book a venue"
+      <!-- FAB + Book (only on Bookings tab) -->
+      <button onclick="openBookSheet()" aria-label="Book a venue" id="leader-fab"
         style="position:fixed;bottom:calc(28px + env(safe-area-inset-bottom));left:50%;transform:translateX(-50%);height:56px;padding:0 22px 0 18px;border-radius:999px;background:#FABB22;color:#261900;border:4px solid #FCFCFD;font-family:'Lato',sans-serif;font-size:15px;font-weight:800;line-height:1;box-shadow:0 4px 14px rgba(250,187,34,0.45);cursor:pointer;display:flex;align-items:center;gap:8px;z-index:70;">
         <span style="font-size:22px;line-height:1;font-weight:300;">+</span> Book
       </button>
@@ -281,7 +281,7 @@
       </button>
       <button onclick="openReachOut()"
         style="display:flex;align-items:center;justify-content:center;gap:9px;width:100%;padding:14px 20px;margin-top:9px;background:#fff;color:#191C20;border:1.5px solid #C6C6CA;border-radius:14px;font-family:'Lato',sans-serif;font-size:15px;font-weight:800;cursor:pointer;">
-        <span style="font-size:17px;line-height:1;">💬</span> Talk to venue on WhatsApp
+        <span style="font-size:17px;line-height:1;">💬</span> Talk to venue
       </button>
     </div>
   </div>
@@ -684,7 +684,7 @@ You'll get notified when they respond.</p>
                <div class="vp-clubs-section-sub">All clubs you've hosted · newest first · older ones fade</div>
              </div>
              <div class="vp-active-clubs">
-               <div class="vp-active-club-card" onclick="toast('Opening Indiranagar Book Club…')">
+               <div class="vp-active-club-card" onclick="openClub('book')">
                  <div class="vp-active-club-avatar">📚</div>
                  <div class="vp-active-club-body">
                    <div class="vp-active-club-name">Indiranagar Book Club</div>
@@ -883,6 +883,26 @@ You'll get notified when they respond.</p>
     <div class="vp-sticky-cta">
       <button onclick="toast('Booking cancelled — leader notified')"
         style="display:flex;align-items:center;justify-content:center;gap:9px;width:100%;padding:15px 20px;background:#fff;color:#BA1A1A;border:1.5px solid #F8C8C8;border-radius:14px;font-family:'Lato',sans-serif;font-size:15px;font-weight:800;cursor:pointer;">Cancel booking</button>
+    </div>
+  </div>
+
+  <!-- ===================== V6 CLUB DETAIL (venue view) ===================== -->
+  <div class="screen-host" data-screen="club-detail">
+    <div class="syc-screen vp-detail-screen">
+      <div class="vp-detail-topbar">
+        <button class="syc-back-btn white-bg" onclick="back()" aria-label="Back">
+          <svg viewBox="0 0 24 24" fill="none" width="24" height="24"><path d="M15 18L9 12L15 6" stroke="#191C20" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <div id="cd-topname" style="font-family:'Lato',sans-serif;font-size:13px;font-weight:700;color:#46474A;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:220px;">Club</div>
+        <div style="width:48px"></div>
+      </div>
+      <div id="cd-body"></div>
+    </div>
+    <div class="vp-sticky-cta">
+      <button onclick="toast('Opening WhatsApp to message the leader…')"
+        style="display:flex;align-items:center;justify-content:center;gap:10px;width:100%;padding:16px 20px;background:#FABB22;color:#191C20;border:none;border-radius:14px;font-family:'Lato',sans-serif;font-size:16px;font-weight:800;cursor:pointer;box-shadow:0 4px 16px rgba(250,187,34,0.35);">
+        <span style="font-size:18px;line-height:1;">💬</span> Talk to leader
+      </button>
     </div>
   </div>
 
@@ -1372,11 +1392,20 @@ You'll get notified when they respond.</p>
 
   /* ---------- explore-clubs grid (real V1Clubs) ---------- */
   const EXPLORE_CLUBS = [
-    { name:'Bangalore Run Club',   activity:'Running',  emoji:'🏃', leader:'Rohan', photo:'club-run.jpg', rating:4.8, meetups:12, isNew:false },
-    { name:'SoBo Comedy Nights',   activity:'Comedy',   emoji:'🎤', leader:'Karan', alt:'alt2', rating:4.6, meetups:9, isNew:false },
-    { name:'Sunrise Yoga',         activity:'Yoga',     emoji:'🧘', leader:'Meera', alt:'alt3', isNew:true },
-    { name:'Indiranagar Film Society', activity:'Film', emoji:'🎬', leader:'Dev', alt:'alt4', rating:4.7, meetups:6, isNew:false },
+    { id:'run', name:'Bangalore Run Club', activity:'Running', emoji:'🏃', leader:'Rohan', photo:'club-run.jpg', rating:4.8, meetups:12, isNew:false,
+      members:'30+', freq:'Weekly', turnout:'28', founded:'Nov 2025', area:'Whitefield', about:"An early-morning running crew that loves a post-run social. Routes around the lake, then coffee and conversation.", recent:[{date:'Sat 21 Jun',venue:'Cubbon Park',meta:'28 attended · ★ 5'},{date:'Sat 14 Jun',venue:'Lalbagh',meta:'25 attended · ★ 5'}] },
+    { id:'comedy', name:'SoBo Comedy Nights', activity:'Comedy', emoji:'🎤', leader:'Karan', alt:'alt2', rating:4.6, meetups:9, isNew:false,
+      members:'40+', freq:'Fortnightly', turnout:'35', founded:'Aug 2025', area:'Koramangala', about:"Open-mic comedy nights for new and seasoned comics. A warm room, a mic, and a crowd that's here for the laughs.", recent:[{date:'Fri 20 Jun',venue:'The Humming Tree',meta:'35 attended · ★ 5'},{date:'Fri 6 Jun',venue:'That Comedy Club',meta:'30 attended · ★ 4'}] },
+    { id:'yoga', name:'Sunrise Yoga', activity:'Yoga', emoji:'🧘', leader:'Meera', alt:'alt3', isNew:true,
+      members:'15', freq:'—', turnout:'—', founded:'Jun 2026', area:'HSR Layout', about:"A gentle morning yoga circle just getting started — all levels welcome.", recent:[] },
+    { id:'film', name:'Indiranagar Film Society', activity:'Film', emoji:'🎬', leader:'Dev', alt:'alt4', rating:4.7, meetups:6, isNew:false,
+      members:'25', freq:'Monthly', turnout:'22', founded:'Feb 2026', area:'Indiranagar', about:"A monthly film club screening indie and world cinema, followed by a lively discussion over chai.", recent:[{date:'Sun 15 Jun',venue:'Canvas Room',meta:'22 attended · ★ 5'}] },
   ];
+  const MY_CLUBS = [
+    { id:'book', name:'Indiranagar Book Club', activity:'Book club', emoji:'📚', leader:'Aisha R.', photo:'club-book.jpg', rating:4.8, meetups:12, isNew:false,
+      members:'14', freq:'Weekly', turnout:'12', founded:'Jan 2026', area:'Indiranagar', about:"A cosy weekly read for book lovers in Indiranagar — author nights, quiet discussions, the occasional poetry slam.", recent:[{date:'Thu 18 Jun',venue:'The Hive Café',meta:'14 attended · ★ 5'},{date:'Thu 11 Jun',venue:'The Hive Café',meta:'12 attended · ★ 5'}] },
+  ];
+  const clubById = (id) => [...EXPLORE_CLUBS, ...MY_CLUBS].find(c => c.id === id) || EXPLORE_CLUBS[0];
   function clubCardHTML(c){
     const cover = c.photo
       ? `<img src="assets/img/${c.photo}" alt="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;" /><div style="position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,0) 40%,rgba(0,0,0,0.35) 100%);"></div>`
@@ -1386,7 +1415,7 @@ You'll get notified when they respond.</p>
     const rating = c.isNew
       ? `<span class="vp-venue-rating" style="color:#7A5900;">Just started</span>`
       : `<span class="vp-venue-rating">★ ${c.rating} · ${c.meetups}</span>`;
-    return `<div class="vp-venue-card" onclick="toast('Opening ${c.name}…')">
+    return `<div class="vp-venue-card" onclick="openClub('${c.id}')">
       <div class="vp-venue-cover ${c.photo?'':(c.alt||'')}" style="position:relative;overflow:hidden;">
         ${cover}
         <div style="position:absolute;bottom:12px;left:12px;width:44px;height:44px;border-radius:50%;background:#FFF;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 6px rgba(0,0,0,0.18);font-size:22px;">${c.emoji}</div>
@@ -1414,6 +1443,50 @@ You'll get notified when they respond.</p>
     const anchor = document.getElementById('explore-section-anchor');
     const scroller = document.querySelector('.screen-host[data-screen="venue-owner"] .vf-scroll');
     if(anchor && scroller){ scroller.scrollTo({ top: Math.max(0, anchor.offsetTop - 8), behavior:'smooth' }); }
+  }
+
+  /* ---------- club detail (V6ClubDetail) ---------- */
+  function openClub(id){ renderClubDetail(id); go('club-detail'); }
+  function renderClubDetail(id){
+    const c = clubById(id);
+    document.getElementById('cd-topname').textContent = c.name;
+    const coverBg = c.photo
+      ? `background-image:url('assets/img/${c.photo}');background-size:cover;background-position:center;`
+      : 'background:linear-gradient(135deg,#A9EFC7,#4CA3C7);';
+    const ratingRow = c.isNew
+      ? `<div class="vp-rating-row" style="color:#7A5900;">Just started · founded ${c.founded}</div>`
+      : `<div class="vp-rating-row"><span class="star">★</span> <strong>${c.rating}</strong> · <span style="color:#717175;">${c.meetups} meetups hosted · founded ${c.founded}</span></div>`;
+    const newPill = c.isNew ? `<span class="vp-pill" style="background:#FFF8E6;color:#7A5900;border:1px solid #FCE7B0;">🆕 New club</span>` : '';
+    const recent = (c.recent && c.recent.length)
+      ? c.recent.map(a=>`<div class="vp-activity-row"><div class="vp-activity-date">${a.date}</div><div class="vp-activity-body"><div class="vp-activity-venue">${a.venue}</div><div class="vp-activity-meta">${a.meta}</div></div></div>`).join('')
+      : `<div style="font-family:'Lato',sans-serif;font-size:13px;color:#717175;padding:4px 0;">No past meetups yet — this club is just getting started.</div>`;
+    document.getElementById('cd-body').innerHTML = `
+      <div class="vp-detail-cover" style="${coverBg}position:relative;display:flex;align-items:center;justify-content:center;">
+        <div style="width:96px;height:96px;border-radius:50%;background:#FFF;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 16px rgba(0,0,0,0.12);font-size:42px;">${c.emoji}</div>
+      </div>
+      <div class="vp-identity">
+        <div class="vp-identity-name">${c.name}</div>
+        <div class="vp-identity-meta">
+          <span class="vp-pill green">${c.emoji} ${c.activity}</span>
+          ${newPill}
+          <span class="vp-identity-area">📍 ${c.area}</span>
+        </div>
+        ${ratingRow}
+      </div>
+      <div class="vp-stats" style="grid-template-columns:repeat(3,1fr);">
+        <div class="vp-stat-card"><div class="vp-stat-icon blue">👥</div><div class="vp-stat-label">Members</div><div class="vp-stat-value" style="font-size:13px;">${c.members}</div></div>
+        <div class="vp-stat-card"><div class="vp-stat-icon green">📅</div><div class="vp-stat-label">Frequency</div><div class="vp-stat-value" style="font-size:13px;">${c.freq}</div></div>
+        <div class="vp-stat-card"><div class="vp-stat-icon">📊</div><div class="vp-stat-label">Avg turnout</div><div class="vp-stat-value" style="font-size:13px;">${c.turnout}</div></div>
+      </div>
+      <div class="vp-section"><div class="vp-section-title">Leader</div>
+        <div class="vp-leader-card">
+          <div class="vp-leader-avatar">${c.leader.charAt(0)}</div>
+          <div class="vp-leader-body"><div class="vp-leader-name">${c.leader}</div><div class="vp-leader-meta">${c.isNew ? 'First club on Misfits' : ('★ ' + c.rating + ' · ' + c.meetups + ' meetups')}</div></div>
+        </div>
+      </div>
+      <div class="vp-section"><div class="vp-section-title">About this club</div><div class="vp-section-body">${c.about}</div></div>
+      <div class="vp-section"><div class="vp-section-title">Recent activity</div><div class="vp-activity-timeline">${recent}</div></div>
+      <div style="height:16px;"></div>`;
   }
 
   /* ---------- modals + sheets ---------- */
@@ -1486,6 +1559,7 @@ You'll get notified when they respond.</p>
     document.getElementById('ltab-explore').style.display  = tab==='explore'  ? 'block' : 'none';
     document.getElementById('lnav-bookings').classList.toggle('active', tab==='bookings');
     document.getElementById('lnav-explore').classList.toggle('active', tab==='explore');
+    const fab = document.getElementById('leader-fab'); if(fab) fab.style.display = tab==='bookings' ? 'flex' : 'none';
     const sc = document.getElementById('leader-scroll'); if(sc) sc.scrollTop = 0;
   }
   function openLeaderHome(tab){ go('leader-home'); leaderTab(tab || 'bookings'); }
