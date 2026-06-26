@@ -822,6 +822,70 @@ You'll get notified when they respond.</p>
     </div>
   </div>
 
+  <!-- ===================== V3 BOOKING DETAIL (venue view) ===================== -->
+  <div class="screen-host" data-screen="bookreq-detail">
+    <div class="syc-screen vp-detail-screen">
+      <div class="vp-detail-topbar">
+        <button class="syc-back-btn white-bg" onclick="back()" aria-label="Back">
+          <svg viewBox="0 0 24 24" fill="none" width="24" height="24"><path d="M15 18L9 12L15 6" stroke="#191C20" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <div style="font-family:'Lato',sans-serif;font-size:13px;font-weight:700;color:#46474A;">Booking</div>
+        <button class="syc-back-btn white-bg" onclick="back()" aria-label="Close">
+          <svg viewBox="0 0 24 24" fill="none" width="24" height="24"><path d="M18 6L6 18M6 6l12 12" stroke="#191C20" stroke-width="2" stroke-linecap="round"/></svg>
+        </button>
+      </div>
+
+      <div class="vp-bookreq-detail-header">
+        <div class="vp-bookreq-club">
+          <div class="vp-bookreq-club-avatar">📚</div>
+          <div style="flex:1;">
+            <div class="vp-bookreq-club-name">Indiranagar Book Club</div>
+            <div class="vp-bookreq-club-sub">Led by Aisha R. · ⭐ 4.8 · 12 meetups · Verified ✓</div>
+          </div>
+        </div>
+        <div style="padding:10px 0 0 60px;">
+          <span style="display:inline-flex;align-items:center;gap:10px;padding:9px 16px 9px 14px;border-radius:14px;background:linear-gradient(135deg,#FFF3CC 0%,#FCE7B0 100%);color:#7A5900;font-family:'Lato',sans-serif;font-size:15px;font-weight:800;border:1.5px solid #FABB22;box-shadow:0 2px 6px rgba(122,89,0,0.14);">
+            <span style="font-size:20px;line-height:1;">🔁</span> Recurring booking
+          </span>
+        </div>
+      </div>
+
+      <div style="margin:0 16px 16px;background:#FFFAEC;border:1px solid #FCE7B0;border-radius:14px;padding:14px 16px;">
+        <div style="font-family:'Cabinet Grotesk',sans-serif;font-size:16px;font-weight:800;color:#7A5900;display:flex;align-items:center;gap:8px;margin-bottom:4px;">📋 Things to prep <span style="font-size:12px;font-weight:700;color:#A77F00;margin-left:auto;">1/2 done</span></div>
+        <div style="font-family:'Lato',sans-serif;font-size:12px;color:#A77F00;margin-bottom:10px;line-height:1.4;">Tick each as you set it up. Indiranagar Book Club is counting on this slot.</div>
+        <div onclick="prepTick(this)" style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:#FFF;border:1px solid #C5E0C8;border-radius:10px;margin-bottom:6px;cursor:pointer;font-family:'Lato',sans-serif;font-size:13px;color:#2D6A3E;text-decoration:line-through;opacity:.7;"><div style="width:22px;height:22px;border-radius:6px;background:#3FB85B;color:#FFF;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;flex-shrink:0;">✓</div><div style="flex:1;">Quiet corner reserved</div></div>
+        <div onclick="prepTick(this)" style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:#FFF;border:1px solid #FCE7B0;border-radius:10px;cursor:pointer;font-family:'Lato',sans-serif;font-size:13px;color:#261900;"><div style="width:22px;height:22px;border-radius:6px;border:2px solid #FABB22;background:#FFF;flex-shrink:0;"></div><div style="flex:1;">Projector set up</div></div>
+      </div>
+
+      <div class="vp-leader-msg-section">
+        <div class="vp-leader-msg-label">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#7A5900" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+          Message from leader
+        </div>
+        <div class="vp-leader-msg-body">"We're a cosy weekly read — mostly need quiet seating and a projector for our author nights. Thank you!"</div>
+      </div>
+
+      <div class="vp-bookreq-fact"><div class="vp-bookreq-fact-icon">📅</div><div><strong>Schedule:</strong> Every Thursday · 6–9pm</div></div>
+      <div class="vp-bookreq-fact" style="background:#FFF8E6;border-color:#FCE7B0;"><div class="vp-bookreq-fact-icon">🔁</div><div><strong>Runs for:</strong> 3 months <span style="color:#7A5900;">· until Thu 24 Sep</span></div></div>
+      <div class="vp-bookreq-fact"><div class="vp-bookreq-fact-icon">👥</div><div><strong>Attendees:</strong> 14 people expected</div></div>
+      <div class="vp-bookreq-fact"><div class="vp-bookreq-fact-icon">💰</div><div><strong>Deal:</strong> Venue sponsors the club</div></div>
+      <div class="vp-bookreq-fact"><div class="vp-bookreq-fact-icon">🏃</div><div><strong>Activity:</strong> Book club</div></div>
+      <div class="vp-bookreq-fact" style="align-items:flex-start;"><div class="vp-bookreq-fact-icon">📦</div><div style="flex:1;"><div style="margin-bottom:6px;"><strong>Needs from you:</strong></div><div style="display:flex;flex-wrap:wrap;gap:6px;"><span class="vp-amenity-chip" style="background:#FFFAEC;border:1px solid #FCE7B0;color:#7A5900;font-size:12px;padding:4px 10px;border-radius:14px;">Projector</span><span class="vp-amenity-chip" style="background:#FFFAEC;border:1px solid #FCE7B0;color:#7A5900;font-size:12px;padding:4px 10px;border-radius:14px;">Quiet corner</span></div></div></div>
+
+      <div style="padding:20px;">
+        <div style="background:#FFFAEC;border:1px solid #FCE7B0;border-radius:12px;padding:14px;font-family:'Lato',sans-serif;font-size:13px;color:#7A5900;line-height:18px;">⚡ This came in as a WhatsApp message too. You can reply Yes / No there, or right here — both update the leader the same way.</div>
+      </div>
+      <div style="padding:0 20px 20px;">
+        <div style="font-family:'Lato',sans-serif;font-size:12px;color:#717175;font-weight:700;text-transform:uppercase;letter-spacing:.6px;margin-bottom:8px;">Optional reply to leader</div>
+        <textarea class="vp-form-input" rows="2" placeholder="e.g. 'Yes, upstairs is free. Come at 5:30 to set up.'"></textarea>
+      </div>
+    </div>
+    <div class="vp-sticky-cta">
+      <button onclick="toast('Booking cancelled — leader notified')"
+        style="display:flex;align-items:center;justify-content:center;gap:9px;width:100%;padding:15px 20px;background:#fff;color:#BA1A1A;border:1.5px solid #F8C8C8;border-radius:14px;font-family:'Lato',sans-serif;font-size:15px;font-weight:800;cursor:pointer;">Cancel booking</button>
+    </div>
+  </div>
+
   <!-- ===================== ReachOut modal (L3 Talk) ===================== -->
   <div id="reachout" class="syc-modal-overlay" style="display:none;" onclick="if(event.target===this)closeReachOut()">
     <div class="vp-modal" style="max-width:360px;padding:24px;">
@@ -1251,7 +1315,7 @@ You'll get notified when they respond.</p>
     const cadencePill = b.cadence === 'recurring'
       ? `<span class="vp-status-pill accepted" style="margin-left:8px;font-size:10px;padding:2px 7px;vertical-align:middle;">🔁 Recurring</span>`
       : `<span class="vp-status-pill" style="margin-left:8px;font-size:10px;padding:2px 7px;vertical-align:middle;background:#E8F4F9;color:#1F6080;border:1px solid #C5E3F1;">📅 One-time</span>`;
-    return `<div class="vp-bcard">
+    return `<div class="vp-bcard" onclick="go('bookreq-detail')" style="cursor:pointer;">
       <div class="vp-bcard-date ${b.cls}"><div class="vp-bcard-date-day">${selectedDay}</div><div class="vp-bcard-date-month">${m.short}</div></div>
       <div class="vp-bcard-body">
         <div class="vp-bcard-name">${b.name}${cadencePill}</div>
@@ -1260,7 +1324,7 @@ You'll get notified when they respond.</p>
       </div>
       <span class="vp-status-pill accepted">✓ Confirmed</span>
     </div>
-    <div onclick="toast('Opening booking…')" style="margin:-4px 14px 12px;font-family:'Lato',sans-serif;font-size:12px;color:#717175;cursor:pointer;text-align:right;">Tap for details ›</div>`;
+    <div onclick="go('bookreq-detail')" style="margin:-4px 14px 12px;font-family:'Lato',sans-serif;font-size:12px;color:#717175;cursor:pointer;text-align:right;">Tap for details ›</div>`;
   }
 
   function renderDrawer(day){
@@ -1356,6 +1420,17 @@ You'll get notified when they respond.</p>
   function openReachOut(){ document.getElementById('reachout').style.display='flex'; }
   function closeReachOut(){ document.getElementById('reachout').style.display='none'; }
   function dealToggle(el){ el.classList.toggle('expanded'); }
+  function prepTick(el){
+    const box = el.querySelector('div');
+    const ticked = el.style.textDecoration === 'line-through';
+    if(ticked){
+      el.style.textDecoration='none'; el.style.opacity='1'; el.style.color='#261900'; el.style.borderColor='#FCE7B0';
+      box.style.background='#FFF'; box.style.border='2px solid #FABB22'; box.textContent='';
+    } else {
+      el.style.textDecoration='line-through'; el.style.opacity='.7'; el.style.color='#2D6A3E'; el.style.borderColor='#C5E0C8';
+      box.style.background='#3FB85B'; box.style.border='0'; box.textContent='✓';
+    }
+  }
   function openNewReqs(){ document.getElementById('newreqs').style.display='flex'; }
   function closeNewReqs(){ document.getElementById('newreqs').style.display='none'; }
   function openFab(){ document.getElementById('fabmenu').style.display='flex'; }
